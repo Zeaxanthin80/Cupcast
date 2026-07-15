@@ -1,0 +1,240 @@
+# World Cup Bracket Predictor — Project Guide
+
+## Context
+
+School project for "App Development with Swift" course. Graded against a rubric and
+against Certiport's "App Development with Swift" Objective Domains (Swift Programming
+Language + View Building with SwiftUI sections). Theme: World Cup.
+
+## Hard requirements (do not violate)
+
+- SwiftUI only. **No UIKit** — no `UIViewControllerRepresentable`,
+  `UIViewRepresentable`, or `import UIKit` unless there is truly no SwiftUI equivalent.
+- A custom data structure implemented as **your own class** (not just a SwiftData
+  model wrapper) — see `BracketNode` / `BracketEngine` below.
+- Data persistence via **SwiftData** (`@Model`, `@Query`, `ModelContext`).
+- Minimum 5 distinct screens. This plan has 6.
+- App must be fully functional, visually coherent, and user-friendly — not a skeleton.
+- Minimum deployment target: iOS 17 (required by SwiftData).
+
+## App concept: Bracket Predictor & Score Challenge
+
+A 16-team single-elimination World Cup knockout bracket. The user predicts a winner
+for every match; predictions cascade automatically toward a champion. Once real
+results are entered, the app scores the user's bracket, with points increasing per
+round.
+
+Bracket shape: Round of 16 (8 matches) → Quarterfinals (4) → Semifinals (2) →
+Final (1) = 15 matches total, 4 rounds (round index 0–3).
+
+## Architecture — three layers
+
+1. **SwiftUI views** — 6 screens, every one a `struct` conforming to `View`. Read/write
+   through `BracketEngine` for prediction logic; use `@Query` directly for simple
+   list/browse screens.
+2. **BracketEngine** (custom class, not persisted) — owns a binary tree of
+   `BracketNode`s. This is the "custom data structure" requirement. Built at
+   runtime from the persisted `Team`/`Match` data.
+3. **SwiftData store** — two `@Model` classes, `Team` and `Match`, holding flat,
+   query-friendly data.
+
+## Structs vs classes — deliberate contrast (Objective 2.5.2)
+
+This project must make the struct/class distinction **explicit and explainable**, not
+incidental. Both are present by design:
+
+- **Structs (value types)** — every SwiftUI view (`BracketOverviewView`,
+  `MatchCardView`, `TeamRowView`, `WinnerPicker`, …) plus the `RoundScore` data model
+  below. Chosen because they are copied, have no identity, and nothing needs to
+  reference the same instance.
+- **Classes (reference types)** — `Team`, `Match` (SwiftData requires classes),
+  plus `BracketNode` and `BracketEngine`. Chosen because tree nodes link to each
+  other (`parent`, `left`, `right`), share identity, and mutate in place.
+
+`RoundScore` exists specifically to give a non-view struct data model for contrast:
+
+```swift
+struct RoundScore {
+    let round: Int
+    let correctPicks: Int
+    let pointsEarned: Int
+}
+```
+
+`calculateScore` returns `[RoundScore]`, which drives the Score Summary screen.
+
+## SwiftData models
+
+```swift
+@Model
+final class Team {
+    var id: UUID
+    var name: String
+    var flagAssetName: String
+    var seed: Int
+    var group: String
+}
+
+@Model
+final class Match {
+    var id: UUID
+    var round: Int              // 0 = Round of 16 ... 3 = Final
+    var slot: Int               // position within round, encodes bracket shape
+    var teamA: Team?
+    var teamB: Team?
+    var predictedWinner: Team?
+    var actualWinner: Team?
+    var matchDate: Date?
+}
+```
+
+## Custom class: BracketNode + BracketEngine
+
+`BracketNode` is a plain Swift class (reference semantics required — nodes link to
+each other) forming an in-memory binary tree mirroring the 15 `Match` records.
+`BracketEngine` builds this tree from persisted `Team`/`Match` data and owns the
+logic:
+
+```swift
+class BracketNode {
+    let id = UUID()
+    var round: Int
+    var teamA: Team?
+    var teamB: Team?
+    var predictedWinner: Team? {
+        didSet { parent?.absorb(winner: predictedWinner, from: self) }
+    }
+    var actualWinner: Team?
+    weak var parent: BracketNode?
+    var left: BracketNode?
+    var right: BracketNode?
+}
+
+@Observable
+class BracketEngine {
+    func buildBracket(from teams: [Team]) -> BracketNode { /* builds the tree */ }
+    func advanceWinner(for node: BracketNode, to winner: Team) { /* propagates up */ }
+    func calculateScore(pointsPerRound: [Int] = [1, 2, 4, 8]) -> [RoundScore] { /* … */ }
+    func champion(of root: BracketNode) -> Team? { /* … */ }
+}
+```
+
+## Property wrappers — required usage (Objective 3.6)
+
+Target is iOS 17, so use the **modern Observation framework**. Do NOT use
+`ObservableObject` / `@Published` / `@ObservedObject` / `@EnvironmentObject`.
+
+| Older pattern (course materials may show this)   | Use this instead                                |
+| ------------------------------------------------ | ----------------------------------------------- |
+| `class M: ObservableObject { @Published var x }` | `@Observable class M { var x }`                 |
+| `@ObservedObject var model` in a view            | plain property, or `@State` if the view owns it |
+| `@EnvironmentObject var model`                   | `@Environment(M.self) var model`                |
+
+Note: `@ObservedObject` and `@Observable` are not the same thing — `@ObservedObject`
+is a wrapper placed on a _view property_, `@Observable` is a macro placed on the
+_class declaration_. The certification's 3.6 wording says "Observable", matching the
+modern approach.
+
+Concrete homes for each required wrapper:
+
+- **`@State`** — `MatchDetailView` owns `pickedWinner`; also selected match, sheet
+  presentation flags.
+- **`@Binding`** — `MatchDetailView` passes `$pickedWinner` down to a `WinnerPicker`
+  child view, which reads _and writes_ the parent's value. This is the anchor example
+  of "child edits parent data":
+
+  ```swift
+  struct MatchDetailView: View {
+      @State private var pickedWinner: Team?
+      var body: some View {
+          WinnerPicker(match: match, selection: $pickedWinner)
+      }
+  }
+
+  struct WinnerPicker: View {
+      let match: Match
+      @Binding var selection: Team?
+      var body: some View { /* tap a team → sets selection → parent updates */ }
+  }
+  ```
+
+- **`@Environment`** — `@Environment(\.modelContext)` for SwiftData writes;
+  `@Environment(BracketEngine.self)` for the shared engine.
+- **`@Query`** — team browser and predictions list read SwiftData directly.
+- **`@Observable`** — on `BracketEngine`, injected at the app root via
+  `.environment(engine)`.
+
+## Screens (6)
+
+1. **Bracket overview** — scrollable tree view of all 16 teams collapsing toward
+   a champion. Visual centerpiece. Built from `BracketEngine`'s tree.
+2. **Match detail** — tap a match, see both teams, pick a winner via `WinnerPicker`
+   child view (`@State` + `@Binding`). Feeds `BracketNode.predictedWinner`.
+3. **Predictions** — flat `List` of every pick made so far, editable.
+4. **Score summary** — score broken down by round from `[RoundScore]`.
+5. **Team browser** — grid or list of all 16 teams.
+6. **Team detail** — pushed from team browser via `NavigationLink`; flag, group,
+   seed, match history.
+
+## Objective Domain coverage (map every implementation choice back to these)
+
+| Domain item                                              | Where it lives                                                                                                |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| 2.1 Basic types, casting, constants/variables            | `Team`/`Match` properties; `let` vs `var` throughout                                                          |
+| 2.2 Arrays, Dictionaries                                 | Array of 16 `Team`s seeding the tree; dictionary lookups by `id`                                              |
+| 2.3 Control flow, Guard, ranges                          | `for round in 0..<4` building the tree; `guard let winner = ...`                                              |
+| 2.4 Functions, param naming, defaults                    | `advanceWinner(for:to:)`, `calculateScore(pointsPerRound:)`                                                   |
+| 2.5 Structs vs classes, initializers, property observers | `RoundScore`/views as structs vs `BracketNode`/`BracketEngine` as classes; `didSet` auto-advances the bracket |
+| 2.6 Optionals, binding, chaining                         | `teamA`/`predictedWinner`/`actualWinner` are `Optional`; `if let`/`guard let`                                 |
+| 2.7 Scope, shadowing                                     | Local vs instance vars inside engine methods                                                                  |
+| 3.1–3.2 Layout, multiple views                           | `MatchCardView`, one `View` struct per screen                                                                 |
+| 3.3 List views                                           | Predictions list, team browser                                                                                |
+| 3.4 Extract subviews                                     | `MatchCardView`, `TeamRowView`, `RoundColumnView`, `WinnerPicker`                                             |
+| 3.5 NavigationStack, Links, Sheets                       | Root `NavigationStack`, `NavigationLink` to team detail, `.sheet` for prediction picker                       |
+| 3.6 @State/@Binding/@Environment/Observable              | See "Property wrappers" section above                                                                         |
+
+## Conventions
+
+- File layout: `Models/` (SwiftData `@Model` classes + `RoundScore`), `Logic/`
+  (`BracketNode`, `BracketEngine`), `Views/` (one file per screen + subviews),
+  `Resources/` (flag assets, seed data JSON).
+- Seed the 16 teams with sample/preview data for SwiftUI previews — don't require
+  a populated store to preview a view.
+- Prefer `guard let` for early returns over nested `if let`.
+- Keep view bodies small; extract subviews per 3.4 rather than writing long
+  single-view bodies.
+
+## Build plan — work in phases, one at a time
+
+**IMPORTANT: Do not build the whole app in one pass.** Complete one phase, stop, and
+wait for review before starting the next. Each phase ends with a build that compiles
+and runs in the simulator, and a git commit.
+
+- **Phase 1 — Data layer.** `Team`, `Match`, `RoundScore`. `ModelContainer` wired in
+  the app entry point. Seed data for 16 teams + 15 matches.
+  _Done when:_ app launches, store populates, data verifiable via a temporary
+  debug list.
+- **Phase 2 — BracketEngine.** `BracketNode`, tree construction, `advanceWinner`,
+  `champion`, `calculateScore`. No UI work.
+  _Done when:_ engine builds a correct 15-node tree and scoring returns correct
+  `[RoundScore]` values, verified via `#Preview` or a debug harness view.
+- **Phase 3 — Bracket overview screen.** The visual centerpiece. `RoundColumnView`
+  and `MatchCardView` extracted as subviews.
+  _Done when:_ all 4 rounds render and reflect engine state.
+- **Phase 4 — Match detail + WinnerPicker.** `@State`/`@Binding` pattern. Picks
+  persist and cascade up the tree.
+  _Done when:_ picking a winner updates the bracket overview and survives relaunch.
+- **Phase 5 — Predictions + Score summary.** `@Query` list, editing, score breakdown.
+  _Done when:_ entering actual results produces a correct score by round.
+- **Phase 6 — Team browser + Team detail + polish.** Grid/list, `NavigationLink`,
+  visual consistency pass, empty states.
+  _Done when:_ all 6 screens navigable and coherent.
+
+## Working notes for Claude Code
+
+- Read this file at the start of every session before making changes.
+- **Build one phase at a time. Stop at each phase boundary and report what changed
+  before continuing.**
+- Confirm before restructuring the architecture described here — ask first if a
+  change would affect the objective-domain mapping above.
+- After each phase, state which objective-domain items that phase satisfied.
