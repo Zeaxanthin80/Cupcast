@@ -238,3 +238,9 @@ and runs in the simulator, and a git commit.
 - Confirm before restructuring the architecture described here — ask first if a
   change would affect the objective-domain mapping above.
 - After each phase, state which objective-domain items that phase satisfied.
+
+---
+
+---
+
+"Read CLAUDE.md, then implement Phase 1 (data layer only). For flags, I'll add the real images myself — seed flagAssetName with real asset names like flag_argentina and I'll drop the 16 PNGs into Assets.xcassets. Build, run in the simulator, and confirm the store populates before committing."
