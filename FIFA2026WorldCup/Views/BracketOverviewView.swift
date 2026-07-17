@@ -1,0 +1,126 @@
+//
+//  BracketOverviewView.swift
+//  FIFA2026WorldCup
+//
+//  Phase 3 — Bracket overview. Screen 1 of 6, the visual centerpiece.
+//
+//  Four round columns joined by connector lines, scrolling both ways, with a
+//  champion banner on top. Reads the shared BracketEngine from the environment
+//  (Objective 3.6) and builds its tree from the store's matches on first
+//  appearance. Match cards render engine state only — picking winners is
+//  Phase 4's job (Match detail + WinnerPicker).
+//
+
+import SwiftUI
+import SwiftData
+
+struct BracketOverviewView: View {
+    @Environment(BracketEngine.self) private var engine
+    @Query(sort: [SortDescriptor(\Match.round), SortDescriptor(\Match.slot)])
+    private var matches: [Match]
+
+    // Shared layout constants — one height for every column is the invariant the
+    // whole bracket geometry hangs on (see RoundColumnView / BracketConnector).
+    private let headerHeight: CGFloat = 28
+    private let matchAreaHeight: CGFloat = 672   // 8 slots × 84pt
+
+    var body: some View {
+        Group {
+            if engine.root == nil {
+                ProgressView("Building bracket…")
+            } else {
+                bracket
+            }
+        }
+        .navigationTitle("2026 Bracket")
+        .navigationBarTitleDisplayMode(.inline)
+        // Build once the store's matches are available. Keyed on the count so the
+        // guard re-runs if the query delivers after first render.
+        .task(id: matches.count) {
+            guard engine.root == nil, !matches.isEmpty else { return }
+            engine.buildBracket(from: matches)
+        }
+    }
+
+    private var bracket: some View {
+        ScrollView([.horizontal, .vertical]) {
+            VStack(alignment: .leading, spacing: 16) {
+                championBanner
+
+                HStack(alignment: .top, spacing: 0) {
+                    ForEach(0..<BracketEngine.roundCount, id: \.self) { round in
+                        RoundColumnView(
+                            round: round,
+                            nodes: engine.nodes(inRound: round),
+                            matchAreaHeight: matchAreaHeight,
+                            headerHeight: headerHeight
+                        )
+
+                        if round + 1 < BracketEngine.roundCount {
+                            BracketConnectorColumn(
+                                pairCount: BracketEngine.slotCount(inRound: round + 1),
+                                matchAreaHeight: matchAreaHeight,
+                                headerHeight: headerHeight
+                            )
+                        }
+                    }
+                }
+            }
+            .padding()
+        }
+    }
+
+    private var championBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "trophy.fill")
+                .foregroundStyle(.yellow)
+
+            if let champion = engine.root.flatMap({ engine.champion(of: $0) }) {
+                FlagView(team: champion)
+                Text(champion.name)
+                    .fontWeight(.bold)
+            } else {
+                Text("Champion undecided — make your picks")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .font(.subheadline)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Capsule().fill(.quaternary.opacity(0.5)))
+    }
+}
+
+// MARK: - Previews (no populated store required, per CLAUDE.md conventions)
+
+#Preview("With picks") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Team.self, Match.self, configurations: config)
+
+    let engine = BracketEngine()
+    engine.buildBracket(from: SeedData.makeTeams())
+
+    // Walk a full set of picks in: every favorite by seed, champion Argentina.
+    for round in 0..<BracketEngine.roundCount {
+        for node in engine.nodes(inRound: round) {
+            guard let teamA = node.teamA, let teamB = node.teamB else { continue }
+            engine.advanceWinner(for: node, to: teamA.seed < teamB.seed ? teamA : teamB)
+        }
+    }
+
+    return NavigationStack { BracketOverviewView() }
+        .environment(engine)
+        .modelContainer(container)
+}
+
+#Preview("Fresh — no picks") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Team.self, Match.self, configurations: config)
+
+    let engine = BracketEngine()
+    engine.buildBracket(from: SeedData.makeTeams())
+
+    return NavigationStack { BracketOverviewView() }
+        .environment(engine)
+        .modelContainer(container)
+}

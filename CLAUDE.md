@@ -90,12 +90,15 @@ final class Match {
 
 ## Custom class: BracketNode + BracketEngine
 
-`BracketNode` is a plain Swift class (reference semantics required — nodes link to
+`BracketNode` is your own Swift class (reference semantics required — nodes link to
 each other) forming an in-memory binary tree mirroring the 15 `Match` records.
-`BracketEngine` builds this tree from persisted `Team`/`Match` data and owns the
-logic:
+Since Phase 3 it is also `@Observable`, so SwiftUI redraws exactly the match cards
+whose node the cascade mutates — the macro preserves `didSet`, verified against the
+Phase 2 self-check harness before it was deleted. `BracketEngine` builds this tree
+from persisted `Team`/`Match` data and owns the logic:
 
 ```swift
+@Observable
 class BracketNode {
     let id = UUID()
     var round: Int
@@ -162,7 +165,8 @@ Concrete homes for each required wrapper:
   `@Environment(BracketEngine.self)` for the shared engine.
 - **`@Query`** — team browser and predictions list read SwiftData directly.
 - **`@Observable`** — on `BracketEngine`, injected at the app root via
-  `.environment(engine)`.
+  `.environment(engine)`; also on `BracketNode` (since Phase 3), which is what lets
+  match cards redraw when the cascade mutates a node.
 
 ## Screens (6)
 
@@ -224,20 +228,27 @@ A commit can't contain its own SHA, so backfill SHAs later or just leave them of
 
 - **Phase 1 — Data layer.** ✅ COMPLETE — commit `856770d`. `Team`, `Match`,
   `RoundScore`. `ModelContainer` wired in the app entry point. Seed data for 16
-  teams + 15 matches. Note: `Views/DebugStoreView.swift` is a throwaway verification
-  screen from this phase — delete it in Phase 3, don't build on it.
+  teams + 15 matches. Note: `Views/DebugStoreView.swift` was a throwaway
+  verification screen from this phase — deleted in Phase 3 as planned.
   _Done when:_ app launches, store populates, data verifiable via a temporary
   debug list.
 - **Phase 2 — BracketEngine.** ✅ COMPLETE. `BracketNode`, tree construction,
   `advanceWinner`, `champion`, `calculateScore`. No UI work. The canonical bracket
   shape (`r16SeedPairings`, `slotCount(inRound:)`, `roundName`) lives on
   `BracketEngine` as statics and `SeedData` builds from it — define the shape there
-  and nowhere else. `Views/DebugEngineView.swift` is throwaway verification from
-  this phase; delete it with `DebugStoreView` in Phase 3.
+  and nowhere else. `Views/DebugEngineView.swift` was throwaway verification from
+  this phase; deleted with `DebugStoreView` in Phase 3.
   _Done when:_ engine builds a correct 15-node tree and scoring returns correct
   `[RoundScore]` values, verified via `#Preview` or a debug harness view.
-- **Phase 3 — Bracket overview screen.** The visual centerpiece. `RoundColumnView`
-  and `MatchCardView` extracted as subviews.
+- **Phase 3 — Bracket overview screen.** ✅ COMPLETE. The visual centerpiece.
+  `RoundColumnView` and `MatchCardView` extracted as subviews, plus `TeamSlotView`,
+  `FlagView`, and `BracketConnector` (a custom `Shape`). App root is now
+  `NavigationStack { BracketOverviewView() }` with the engine injected via
+  `.environment`. Layout invariant: every round column shares one total height with
+  cards centered in equal slices — the connector geometry depends on it, so don't
+  give columns independent heights. `FlagView` layers the asset image over a
+  placeholder in a `ZStack`; missing PNGs show the placeholder (no UIKit existence
+  check), so console "No image named…" warnings are expected until the flags land.
   _Done when:_ all 4 rounds render and reflect engine state.
 - **Phase 4 — Match detail + WinnerPicker.** `@State`/`@Binding` pattern. Picks
   persist and cascade up the tree.

@@ -10,6 +10,9 @@
 //  and a child could never reach its parent. Contrast with RoundScore, which is a
 //  struct precisely because it has none of those needs.
 //
+//  @Observable so SwiftUI redraws the exact cards whose node the cascade mutates.
+//  The macro preserves property observers, so the didSet below keeps firing.
+//
 //  The tree mirrors the 15 persisted Match records:
 //      round 0 = Round of 16 → the 8 leaves (the only nodes seeded with real teams)
 //      round 3 = Final       → the root
@@ -17,7 +20,9 @@
 //
 
 import Foundation
+import Observation
 
+@Observable
 class BracketNode: Identifiable {
     let id = UUID()
 
