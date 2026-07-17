@@ -69,29 +69,18 @@ enum SeedData {
         // dictionary keyed by an Int, built from the array).
         let bySeed = Dictionary(uniqueKeysWithValues: teams.map { ($0.seed, $0) })
 
-        // Round of 16 pairings (teamA seed, teamB seed), slot order left→right in the
-        // bracket. Arranged so seeds 1 and 2 can only meet in the Final.
-        let r16Pairings: [(Int, Int)] = [
-            (1, 16),   // slot 0
-            (8, 9),    // slot 1
-            (5, 12),   // slot 2
-            (4, 13),   // slot 3
-            (3, 14),   // slot 4
-            (6, 11),   // slot 5
-            (7, 10),   // slot 6
-            (2, 15),   // slot 7
-        ]
-
         var matches: [Match] = []
 
-        // Round 0 — Round of 16 (8 matches, teams assigned).
-        for (slot, pairing) in r16Pairings.enumerated() {
+        // Round 0 — Round of 16 (8 matches, teams assigned). The pairings live on
+        // BracketEngine so the persisted matches and the in-memory tree are built
+        // from one definition of the bracket's shape and can't drift apart.
+        for (slot, pairing) in BracketEngine.r16SeedPairings.enumerated() {
             matches.append(
                 Match(
                     round: 0,
                     slot: slot,
-                    teamA: bySeed[pairing.0],
-                    teamB: bySeed[pairing.1],
+                    teamA: bySeed[pairing.teamA],
+                    teamB: bySeed[pairing.teamB],
                     matchDate: r16Dates[slot]
                 )
             )

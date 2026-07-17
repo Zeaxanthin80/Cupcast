@@ -218,8 +218,9 @@ and runs in the simulator, and a git commit.
 
 **Where the project stands is tracked inline below. The first phase not marked
 COMPLETE is the next one to build — never assume a phase needs redoing because some
-other note mentions it.** Mark a phase COMPLETE (with its commit SHA) as part of that
-phase's own commit.
+other note mentions it.** Mark a phase COMPLETE as part of that phase's own commit.
+A commit can't contain its own SHA, so backfill SHAs later or just leave them off —
+`git log` is the authority, these are only a convenience.
 
 - **Phase 1 — Data layer.** ✅ COMPLETE — commit `856770d`. `Team`, `Match`,
   `RoundScore`. `ModelContainer` wired in the app entry point. Seed data for 16
@@ -227,8 +228,12 @@ phase's own commit.
   screen from this phase — delete it in Phase 3, don't build on it.
   _Done when:_ app launches, store populates, data verifiable via a temporary
   debug list.
-- **Phase 2 — BracketEngine.** `BracketNode`, tree construction, `advanceWinner`,
-  `champion`, `calculateScore`. No UI work.
+- **Phase 2 — BracketEngine.** ✅ COMPLETE. `BracketNode`, tree construction,
+  `advanceWinner`, `champion`, `calculateScore`. No UI work. The canonical bracket
+  shape (`r16SeedPairings`, `slotCount(inRound:)`, `roundName`) lives on
+  `BracketEngine` as statics and `SeedData` builds from it — define the shape there
+  and nowhere else. `Views/DebugEngineView.swift` is throwaway verification from
+  this phase; delete it with `DebugStoreView` in Phase 3.
   _Done when:_ engine builds a correct 15-node tree and scoring returns correct
   `[RoundScore]` values, verified via `#Preview` or a debug harness view.
 - **Phase 3 — Bracket overview screen.** The visual centerpiece. `RoundColumnView`

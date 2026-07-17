@@ -24,9 +24,16 @@ struct FIFA2026WorldCupApp: App {
 
     var body: some Scene {
         WindowGroup {
-            // TEMP (Phase 1): verify the store populates. Replaced by the real
-            // Bracket Overview screen in Phase 3.
-            DebugStoreView()
+            // TEMP (Phases 1–2): verify the store populates and the engine behaves.
+            // This whole TabView, DebugStoreView, and DebugEngineView all get
+            // deleted when the real Bracket Overview screen lands in Phase 3.
+            TabView {
+                NavigationStack { DebugEngineView() }
+                    .tabItem { Label("Engine", systemImage: "checklist") }
+
+                DebugStoreView()
+                    .tabItem { Label("Store", systemImage: "cylinder.split.1x2") }
+            }
         }
         .modelContainer(container)
     }

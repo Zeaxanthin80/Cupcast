@@ -38,7 +38,7 @@ struct DebugStoreView: View {
                 Section("Matches (\(matches.count))") {
                     ForEach(matches) { match in
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("\(roundName(match.round)) · slot \(match.slot)")
+                            Text("\(BracketEngine.roundName(match.round)) · slot \(match.slot)")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             Text("\(match.teamA?.name ?? "TBD") vs \(match.teamB?.name ?? "TBD")")
@@ -53,16 +53,6 @@ struct DebugStoreView: View {
                 }
             }
             .navigationTitle("Debug Store")
-        }
-    }
-
-    private func roundName(_ round: Int) -> String {
-        switch round {
-        case 0: return "Round of 16"
-        case 1: return "Quarterfinal"
-        case 2: return "Semifinal"
-        case 3: return "Final"
-        default: return "Round \(round)"
         }
     }
 }
