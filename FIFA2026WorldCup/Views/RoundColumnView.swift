@@ -18,6 +18,9 @@ struct RoundColumnView: View {
     let nodes: [BracketNode]
     let matchAreaHeight: CGFloat
     let headerHeight: CGFloat
+    /// Called with the tapped node. Cards for undecided matchups (a team still
+    /// TBD) aren't tappable — there is nothing to pick yet.
+    var onSelect: (BracketNode) -> Void = { _ in }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,8 +31,14 @@ struct RoundColumnView: View {
 
             VStack(spacing: 0) {
                 ForEach(nodes) { node in
-                    MatchCardView(node: node)
-                        .frame(maxHeight: .infinity)   // equal slice per match
+                    Button {
+                        onSelect(node)
+                    } label: {
+                        MatchCardView(node: node)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!node.isReady)
+                    .frame(maxHeight: .infinity)   // equal slice per match
                 }
             }
             .frame(width: MatchCardView.width, height: matchAreaHeight)

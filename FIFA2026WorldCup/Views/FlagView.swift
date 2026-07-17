@@ -19,15 +19,18 @@ import SwiftUI
 
 struct FlagView: View {
     let team: Team?
+    // Defaults are the bracket-card size; MatchDetailView passes larger ones.
+    var width: CGFloat = 21
+    var height: CGFloat = 15
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 3)
+            RoundedRectangle(cornerRadius: height * 0.2)
                 .fill(.quaternary)
 
             if let team {
                 Text(team.name.prefix(1))
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: height * 0.6, weight: .bold))
                     .foregroundStyle(.secondary)
 
                 Image(team.flagAssetName)
@@ -35,14 +38,15 @@ struct FlagView: View {
                     .scaledToFill()
             }
         }
-        .frame(width: 21, height: 15)
-        .clipShape(RoundedRectangle(cornerRadius: 3))
+        .frame(width: width, height: height)
+        .clipShape(RoundedRectangle(cornerRadius: height * 0.2))
     }
 }
 
-#Preview("With and without team", traits: .sizeThatFitsLayout) {
+#Preview("Card size, detail size, empty", traits: .sizeThatFitsLayout) {
     HStack(spacing: 12) {
         FlagView(team: SeedData.makeTeams().first)
+        FlagView(team: SeedData.makeTeams().first, width: 63, height: 45)
         FlagView(team: nil)
     }
     .padding()

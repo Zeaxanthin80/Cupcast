@@ -19,6 +19,10 @@ struct BracketOverviewView: View {
     @Query(sort: [SortDescriptor(\Match.round), SortDescriptor(\Match.slot)])
     private var matches: [Match]
 
+    /// The match whose sheet is open (Objective 3.5 — .sheet(item:)). BracketNode
+    /// is Identifiable, which is what item-based presentation needs.
+    @State private var selectedNode: BracketNode?
+
     // Shared layout constants — one height for every column is the invariant the
     // whole bracket geometry hangs on (see RoundColumnView / BracketConnector).
     private let headerHeight: CGFloat = 28
@@ -34,6 +38,10 @@ struct BracketOverviewView: View {
         }
         .navigationTitle("2026 Bracket")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $selectedNode) { node in
+            MatchDetailView(node: node)
+                .presentationDetents([.medium, .large])
+        }
         // Build once the store's matches are available. Keyed on the count so the
         // guard re-runs if the query delivers after first render.
         .task(id: matches.count) {
@@ -53,7 +61,8 @@ struct BracketOverviewView: View {
                             round: round,
                             nodes: engine.nodes(inRound: round),
                             matchAreaHeight: matchAreaHeight,
-                            headerHeight: headerHeight
+                            headerHeight: headerHeight,
+                            onSelect: { selectedNode = $0 }
                         )
 
                         if round + 1 < BracketEngine.roundCount {

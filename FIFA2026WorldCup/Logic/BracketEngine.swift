@@ -181,6 +181,17 @@ final class BracketEngine {
         root.predictedWinner
     }
 
+    /// Mirrors every node's pick onto its persisted Match. Called after any pick
+    /// changes; one didSet can invalidate picks far up the tree, so syncing the
+    /// whole tree (15 writes) is the simple way to guarantee store == tree. The
+    /// caller owns the actual save — SwiftData writes happen in views through
+    /// @Environment(\.modelContext), per the project conventions.
+    func syncPredictionsToStore() {
+        for node in allNodes {
+            node.match?.predictedWinner = node.predictedWinner
+        }
+    }
+
     // MARK: - Lookups
 
     func nodes(inRound round: Int) -> [BracketNode] {

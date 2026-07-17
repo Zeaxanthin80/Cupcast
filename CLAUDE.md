@@ -148,18 +148,23 @@ Concrete homes for each required wrapper:
 
   ```swift
   struct MatchDetailView: View {
+      let node: BracketNode
       @State private var pickedWinner: Team?
       var body: some View {
-          WinnerPicker(match: match, selection: $pickedWinner)
+          WinnerPicker(node: node, selection: $pickedWinner)
       }
   }
 
   struct WinnerPicker: View {
-      let match: Match
+      let node: BracketNode
       @Binding var selection: Team?
       var body: some View { /* tap a team → sets selection → parent updates */ }
   }
   ```
+
+  `WinnerPicker` takes the `BracketNode`, not the persisted `Match`, on purpose:
+  for every round after the Round of 16 the matchup exists only in memory,
+  cascaded into the node — the store's `Match` rows carry teams for round 0 only.
 
 - **`@Environment`** — `@Environment(\.modelContext)` for SwiftData writes;
   `@Environment(BracketEngine.self)` for the shared engine.
@@ -250,8 +255,14 @@ A commit can't contain its own SHA, so backfill SHAs later or just leave them of
   placeholder in a `ZStack`; missing PNGs show the placeholder (no UIKit existence
   check), so console "No image named…" warnings are expected until the flags land.
   _Done when:_ all 4 rounds render and reflect engine state.
-- **Phase 4 — Match detail + WinnerPicker.** `@State`/`@Binding` pattern. Picks
-  persist and cascade up the tree.
+- **Phase 4 — Match detail + WinnerPicker.** ✅ COMPLETE. `@State`/`@Binding`
+  pattern. Picks persist and cascade up the tree. Bracket cards are buttons
+  presenting `MatchDetailView` via `.sheet(item:)` (disabled until both teams are
+  known). Persistence path: Confirm → `engine.advanceWinner` (didSet cascade) →
+  `engine.syncPredictionsToStore()` mirrors all 15 nodes onto their `Match` rows →
+  `modelContext.save()` in the view. Relaunch replay was already built in Phase 2
+  (`replayPersistedPredictions`, bottom-up). Flag PNGs landed before this phase;
+  imagesets were renamed to the `flag_<country>` convention in commit `de683d6`.
   _Done when:_ picking a winner updates the bracket overview and survives relaunch.
 - **Phase 5 — Predictions + Score summary.** `@Query` list, editing, score breakdown.
   _Done when:_ entering actual results produces a correct score by round.
