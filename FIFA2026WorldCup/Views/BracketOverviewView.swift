@@ -53,10 +53,13 @@ struct BracketOverviewView: View {
     }
 
     private var bracket: some View {
-        ScrollView([.horizontal, .vertical]) {
-            VStack(alignment: .leading, spacing: 16) {
-                championBanner
+        // The banner is pinned OUTSIDE the scroll view: the bracket scrolls both
+        // ways, and the champion should stay put rather than slide off to the side.
+        VStack(alignment: .leading, spacing: 12) {
+            championBanner
+                .padding(.horizontal)
 
+            ScrollView([.horizontal, .vertical]) {
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(0..<BracketEngine.roundCount, id: \.self) { round in
                         RoundColumnView(
@@ -76,8 +79,8 @@ struct BracketOverviewView: View {
                         }
                     }
                 }
+                .padding()
             }
-            .padding()
         }
     }
 
@@ -96,9 +99,7 @@ struct BracketOverviewView: View {
                         .font(.title2).expandedHeavy()
                         .foregroundStyle(.white)
                     Spacer(minLength: 0)
-                    Image(systemName: "trophy.fill")
-                        .font(.title3)
-                        .foregroundStyle(Theme.gold)
+                    TrophyView(height: 44)
                 } else {
                     Text("Not decided yet")
                         .font(.title3).fontWeight(.semibold)
@@ -122,7 +123,6 @@ struct BracketOverviewView: View {
             RoundedRectangle(cornerRadius: 18)
                 .strokeBorder(champion == nil ? Theme.cardStroke : Theme.gold.opacity(0.4), lineWidth: 1)
         )
-        .frame(width: 520)
     }
 }
 

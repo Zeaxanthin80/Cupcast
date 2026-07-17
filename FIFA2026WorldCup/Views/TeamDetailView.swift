@@ -95,16 +95,15 @@ struct TeamDetailView: View {
     // MARK: - Predicted finish
 
     private var predictionCard: some View {
-        let (icon, text) = finishDescription
         let isChampion = engine.predictedFinish(for: team) == .champion
 
         return HStack(spacing: 12) {
-            Text(icon).font(.system(size: 30))
+            finishIcon
             VStack(alignment: .leading, spacing: 2) {
                 Text("YOUR PREDICTION")
                     .font(.caption2).fontWeight(.heavy).tracking(1.2)
                     .foregroundStyle(Theme.textSecondary)
-                Text(text)
+                Text(finishText)
                     .font(.subheadline).fontWeight(.bold)
                     .foregroundStyle(.white)
             }
@@ -122,20 +121,35 @@ struct TeamDetailView: View {
         )
     }
 
-    private var finishDescription: (icon: String, text: String) {
+    /// The champion gets the real trophy image; the other outcomes stay emoji.
+    @ViewBuilder
+    private var finishIcon: some View {
+        switch engine.predictedFinish(for: team) {
+        case .champion:
+            TrophyView(height: 38)
+        case .noPrediction:
+            Text("🤔").font(.system(size: 30))
+        case .eliminated(let round):
+            Text(round == BracketEngine.roundCount - 1 ? "🥈" : "🚪").font(.system(size: 30))
+        case .advances(let round):
+            Text(round == BracketEngine.roundCount - 1 ? "🥈" : "🎯").font(.system(size: 30))
+        }
+    }
+
+    private var finishText: String {
         switch engine.predictedFinish(for: team) {
         case .noPrediction:
-            return ("🤔", "No prediction yet")
+            return "No prediction yet"
         case .champion:
-            return ("🏆", "Predicted Champion")
+            return "Predicted Champion"
         case .eliminated(let round):
             return round == BracketEngine.roundCount - 1
-                ? ("🥈", "Predicted Finalist")
-                : ("🚪", "Predicted to exit in the \(BracketEngine.roundName(round))")
+                ? "Predicted Finalist"
+                : "Predicted to exit in the \(BracketEngine.roundName(round))"
         case .advances(let round):
             return round == BracketEngine.roundCount - 1
-                ? ("🥈", "Predicted to reach the Final")
-                : ("🎯", "Predicted to reach the \(BracketEngine.roundName(round))")
+                ? "Predicted to reach the Final"
+                : "Predicted to reach the \(BracketEngine.roundName(round))"
         }
     }
 

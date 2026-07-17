@@ -127,6 +127,23 @@ extension View {
     }
 }
 
+/// The World Cup trophy image, sized by height (it's a tall, narrow photo, so the
+/// width follows from the aspect ratio). Extracted so the asset name and treatment
+/// live in one place — the champion banner, Score empty state, and Team detail all
+/// draw the same trophy.
+struct TrophyView: View {
+    var height: CGFloat = 30
+
+    var body: some View {
+        Image("trophy")
+            .resizable()
+            .scaledToFit()
+            .frame(height: height)
+            .shadow(color: Theme.gold.opacity(0.35), radius: height * 0.15)
+            .accessibilityLabel("World Cup trophy")
+    }
+}
+
 /// A reusable glassy card surface (Objective 3.4 — extracted, reused everywhere).
 struct GlassCard<Content: View>: View {
     var cornerRadius: CGFloat = 15

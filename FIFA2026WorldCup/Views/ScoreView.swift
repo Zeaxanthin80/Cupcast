@@ -86,7 +86,7 @@ struct ScoreView: View {
 
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Text("🏆").font(.system(size: 56))
+            TrophyView(height: 96)
             Text("Results aren't in yet")
                 .font(.title2).expandedHeavy().foregroundStyle(.white)
             Text("Make your picks on the bracket, then reveal the demo tournament outcome to see how you scored.")
