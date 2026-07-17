@@ -230,6 +230,25 @@ and runs in the simulator, and a git commit.
   visual consistency pass, empty states.
   _Done when:_ all 6 screens navigable and coherent.
 
+## Version control — how this repo actually works
+
+- **Commit directly to `main`. No feature branches, no pull requests.** Each phase
+  ends with one commit on `main`, made after the phase has been reported and
+  reviewed. Keep unrelated housekeeping in its own commit.
+- **Claude Code cannot push — do not try.** This project's GitHub credential lives
+  in Xcode's own account store (a Bearer token in the login keychain under
+  `Xcode-SCM-Token-…`, account `Zeaxanthin80`). The git CLI can't read it: there is
+  no `github.com` entry for the `osxkeychain` helper, no `gh` CLI, and no SSH key,
+  so command-line `git push` fails with `could not read Username`.
+- **Division of labor:** Claude commits locally; Jose pushes from Xcode
+  (Source Control → Push…). Do not work around this by installing `gh`, creating a
+  personal access token, or reading the Xcode token out of the keychain.
+- Using the git CLI does **not** conflict with Xcode's source control. Both act on
+  the same `.git` directory; only the credential stores are separate and independent.
+- `.gitignore` excludes `build/`, `DerivedData/`, and `xcuserdata/`. Never commit
+  Xcode derived data — one `xcodebuild -derivedDataPath build` run produces ~76MB
+  across ~1,900 files.
+
 ## Working notes for Claude Code
 
 - Read this file at the start of every session before making changes.
