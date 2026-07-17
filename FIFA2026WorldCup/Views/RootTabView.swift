@@ -6,11 +6,8 @@
 //
 //  The app's tab shell (Objective 3.5). CLAUDE.md specifies 6 screens but never
 //  said how the flat ones are reached; this is that answer, matching Jose's mockup.
-//  Each tab owns its own NavigationStack so pushes (Team detail, Phase 6) and the
+//  Each tab owns its own NavigationStack so pushes (Team detail) and the
 //  Match-detail .sheet stay scoped to their tab.
-//
-//  Teams is intentionally absent until Phase 6 (its browser + detail land there),
-//  so there is no placeholder tab — every tab here is fully functional.
 //
 
 import SwiftUI
@@ -24,13 +21,17 @@ struct RootTabView: View {
                 .tabItem { Label("Bracket", systemImage: "arrow.triangle.branch") }
                 .tag(0)
 
+            NavigationStack { TeamBrowserView() }
+                .tabItem { Label("Teams", systemImage: "square.grid.2x2.fill") }
+                .tag(1)
+
             NavigationStack { PredictionsView() }
                 .tabItem { Label("Picks", systemImage: "checklist") }
-                .tag(1)
+                .tag(2)
 
             NavigationStack { ScoreView() }
                 .tabItem { Label("Score", systemImage: "chart.bar.fill") }
-                .tag(2)
+                .tag(3)
         }
         .tint(Theme.accentCyan)
         .preferredColorScheme(.dark)

@@ -57,6 +57,35 @@ enum Theme {
 
     /// Winner-pick highlight — cyan, the mockup's "active" color.
     static let pickTint = accentCyan
+
+    // MARK: Per-team national colors (from the mockup's TEAMS table)
+    //
+    // View-layer flavor only — deliberately NOT on the SwiftData Team model, which
+    // CLAUDE.md fixes exactly. Keyed by flagAssetName, the team's stable string id.
+
+    static let teamColors: [String: Color] = [
+        "flag_argentina": Color(hex: 0x75AADB),
+        "flag_france": Color(hex: 0x3B5BA7),
+        "flag_england": Color(hex: 0xC8102E),
+        "flag_brazil": Color(hex: 0x1DA64A),
+        "flag_portugal": Color(hex: 0xC8102E),
+        "flag_spain": Color(hex: 0xC60B1E),
+        "flag_belgium": Color(hex: 0xC8102E),
+        "flag_morocco": Color(hex: 0xB01E28),
+        "flag_usa": Color(hex: 0x4A5AA0),
+        "flag_mexico": Color(hex: 0x1DA64A),
+        "flag_switzerland": Color(hex: 0xD52B1E),
+        "flag_colombia": Color(hex: 0xE0B700),
+        "flag_canada": Color(hex: 0xD80621),
+        "flag_norway": Color(hex: 0xBA0C2F),
+        "flag_egypt": Color(hex: 0xCE1126),
+        "flag_paraguay": Color(hex: 0x3B6AB8),
+    ]
+
+    static func color(for team: Team?) -> Color {
+        guard let team else { return accentPurple }
+        return teamColors[team.flagAssetName] ?? accentPurple
+    }
 }
 
 /// The layered dark background: a base vertical gradient with two off-screen color

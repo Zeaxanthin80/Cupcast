@@ -203,6 +203,49 @@ final class BracketEngine {
         allNodes.first { $0.round == round && $0.slot == slot }
     }
 
+    /// The team's Round-of-16 match — every team's entry point into the tree.
+    func r16Node(for team: Team) -> BracketNode? {
+        nodes(inRound: 0).first { $0.teamA?.id == team.id || $0.teamB?.id == team.id }
+    }
+
+    /// The team's matches through the predicted bracket, in round order: their R16
+    /// match, then each later match they're picked to reach. A walk up the parent
+    /// pointers — the reference-semantics payoff of BracketNode being a class.
+    func path(for team: Team) -> [BracketNode] {
+        guard var node = r16Node(for: team) else { return [] }
+        var result = [node]
+        while node.predictedWinner?.id == team.id, let parent = node.parent {
+            node = parent
+            result.append(node)
+        }
+        return result
+    }
+
+    /// Where the user's picks say this team's tournament ends.
+    enum PredictedFinish: Equatable {
+        case noPrediction                // their R16 match has no pick yet
+        case eliminated(inRound: Int)    // picked to lose that round's match
+        case advances(toRound: Int)      // picked into this round; no pick there yet
+        case champion                    // picked to win the Final
+    }
+
+    /// Follows the picks from the team's R16 match upward until they lose, the
+    /// picks run out, or they win the Final (Objective 2.3 — while + guard).
+    func predictedFinish(for team: Team) -> PredictedFinish {
+        guard var node = r16Node(for: team) else { return .noPrediction }
+
+        while true {
+            guard let picked = node.predictedWinner else {
+                return node.round == 0 ? .noPrediction : .advances(toRound: node.round)
+            }
+            guard picked.id == team.id else {
+                return .eliminated(inRound: node.round)
+            }
+            guard let parent = node.parent else { return .champion }
+            node = parent
+        }
+    }
+
     // MARK: - Scoring
 
     /// Scores the bracket round by round. Later rounds are worth more, which is the

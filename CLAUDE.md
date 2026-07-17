@@ -203,7 +203,7 @@ the bracket (the 3.5 anchor — kept as a sheet, not a push); team detail is a
 | 2.7 Scope, shadowing                                     | Local vs instance vars inside engine methods                                                                  |
 | 3.1–3.2 Layout, multiple views                           | `MatchCardView`, one `View` struct per screen                                                                 |
 | 3.3 List views                                           | Predictions list, team browser                                                                                |
-| 3.4 Extract subviews                                     | `MatchCardView`, `TeamRowView`, `RoundColumnView`, `WinnerPicker`                                             |
+| 3.4 Extract subviews                                     | `MatchCardView`, `TeamCardView`, `RoundColumnView`, `WinnerPicker`                                            |
 | 3.5 NavigationStack, Links, Sheets                       | Root `NavigationStack`, `NavigationLink` to team detail, `.sheet` for prediction picker                       |
 | 3.6 @State/@Binding/@Environment/Observable              | See "Property wrappers" section above                                                                         |
 
@@ -282,8 +282,17 @@ A commit can't contain its own SHA, so backfill SHAs later or just leave them of
   2026 knockouts haven't happened. `syncPredictionsToStore` became `syncToStore`
   (mirrors both `predictedWinner` and `actualWinner`).
   _Done when:_ entering actual results produces a correct score by round.
-- **Phase 6 — Team browser + Team detail + polish.** Grid/list, `NavigationLink`,
-  visual consistency pass, empty states.
+- **Phase 6 — Team browser + Team detail + polish.** ✅ COMPLETE. Grid/list,
+  `NavigationLink`, visual consistency pass, empty states. `TeamBrowserView` is a
+  two-column `LazyVGrid` of `TeamCardView`s (named CardView, not RowView — it's a
+  grid tile); each card is a `NavigationLink(value:)` resolved by
+  `navigationDestination(for: Team.self)` — the project's 3.5 push anchor.
+  `TeamDetailView` shows the color hero, the predicted finish
+  (`BracketEngine.predictedFinish(for:)`, an enum with associated values), and the
+  team's match history as `engine.path(for:)` — both are parent-pointer walks up
+  the tree. Rows open the shared `MatchDetailView` sheet. Per-team national colors
+  live in `Theme.teamColors` keyed by `flagAssetName` — view-layer only, the
+  SwiftData `Team` model is untouched. Teams tab added to `RootTabView` (slot 2).
   _Done when:_ all 6 screens navigable and coherent.
 
 ## Version control — how this repo actually works
