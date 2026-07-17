@@ -181,14 +181,15 @@ final class BracketEngine {
         root.predictedWinner
     }
 
-    /// Mirrors every node's pick onto its persisted Match. Called after any pick
-    /// changes; one didSet can invalidate picks far up the tree, so syncing the
-    /// whole tree (15 writes) is the simple way to guarantee store == tree. The
-    /// caller owns the actual save — SwiftData writes happen in views through
-    /// @Environment(\.modelContext), per the project conventions.
-    func syncPredictionsToStore() {
+    /// Mirrors every node's pick AND actual result onto its persisted Match. Called
+    /// after any pick or result change; one didSet can invalidate picks far up the
+    /// tree, so syncing the whole tree (15 writes) is the simple way to guarantee
+    /// store == tree. The caller owns the actual save — SwiftData writes happen in
+    /// views through @Environment(\.modelContext), per the project conventions.
+    func syncToStore() {
         for node in allNodes {
             node.match?.predictedWinner = node.predictedWinner
+            node.match?.actualWinner = node.actualWinner
         }
     }
 
@@ -230,5 +231,53 @@ final class BracketEngine {
     func totalPoints(pointsPerRound: [Int] = [1, 2, 4, 8]) -> Int {
         calculateScore(pointsPerRound: pointsPerRound)
             .reduce(0) { $0 + $1.pointsEarned }
+    }
+
+    /// The most a bracket could score: every slot correct, weighted per round.
+    /// 8×1 + 4×2 + 2×4 + 1×8 = 32 with the default weights.
+    func maxPossiblePoints(pointsPerRound: [Int] = [1, 2, 4, 8]) -> Int {
+        (0..<Self.roundCount).reduce(0) { total, round in
+            let points = round < pointsPerRound.count ? pointsPerRound[round] : 0
+            return total + Self.slotCount(inRound: round) * points
+        }
+    }
+
+    // MARK: - Official results (demo)
+    //
+    // CLAUDE.md's concept scores the bracket "once real results are entered" but
+    // never said how they get in. The mockup answers with a "reveal official
+    // results" toggle over a fixed outcome table, so that is what this is: a
+    // DEMONSTRATION outcome (the real 2026 knockouts haven't happened), one winning
+    // seed per match slot, matching the mockup's ACTUALS exactly.
+
+    static let demoActualWinnerSeeds: [String: Int] = [
+        "0-0": 1, "0-1": 9, "0-2": 5, "0-3": 4, "0-4": 3, "0-5": 6, "0-6": 10, "0-7": 2,
+        "1-0": 1, "1-1": 4, "1-2": 3, "1-3": 2,
+        "2-0": 1, "2-1": 2,
+        "3-0": 1,
+    ]
+
+    /// True once any actual result is present — the Score screen derives its
+    /// "results in" state from this rather than a separate persisted flag.
+    var resultsRevealed: Bool {
+        allNodes.contains { $0.actualWinner != nil }
+    }
+
+    /// Stamps the demo outcome onto every node (and mirrors it to the store). The
+    /// caller saves. Actuals are keyed by slot, independent of the user's bracket,
+    /// so scoring asks the clean question "did you pick this slot's real winner?"
+    func revealDemoResults(teams: [Team]) {
+        let bySeed = Dictionary(uniqueKeysWithValues: teams.map { ($0.seed, $0) })
+        for node in allNodes {
+            let key = "\(node.round)-\(node.slot)"
+            node.actualWinner = Self.demoActualWinnerSeeds[key].flatMap { bySeed[$0] }
+        }
+        syncToStore()
+    }
+
+    /// Clears all actual results (and mirrors that to the store). The caller saves.
+    func clearResults() {
+        for node in allNodes { node.actualWinner = nil }
+        syncToStore()
     }
 }

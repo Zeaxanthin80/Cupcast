@@ -36,11 +36,13 @@ struct BracketOverviewView: View {
                 bracket
             }
         }
-        .navigationTitle("2026 Bracket")
-        .navigationBarTitleDisplayMode(.inline)
+        .bracketBackground()
+        .navigationTitle("The Bracket")
+        .navigationBarTitleDisplayMode(.large)
         .sheet(item: $selectedNode) { node in
             MatchDetailView(node: node)
                 .presentationDetents([.medium, .large])
+                .presentationBackground(.black)
         }
         // Build once the store's matches are available. Keyed on the count so the
         // guard re-runs if the query delivers after first render.
@@ -80,23 +82,47 @@ struct BracketOverviewView: View {
     }
 
     private var championBanner: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "trophy.fill")
-                .foregroundStyle(.yellow)
+        let champion = engine.root.flatMap { engine.champion(of: $0) }
+        return VStack(alignment: .leading, spacing: 8) {
+            Text("YOUR PREDICTED CHAMPION")
+                .font(.caption2).fontWeight(.bold).tracking(1.4)
+                .foregroundStyle(Theme.textSecondary)
 
-            if let champion = engine.root.flatMap({ engine.champion(of: $0) }) {
-                FlagView(team: champion)
-                Text(champion.name)
-                    .fontWeight(.bold)
-            } else {
-                Text("Champion undecided — make your picks")
-                    .foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                FlagView(team: champion, width: 46, height: 33)
+
+                if let champion {
+                    Text(champion.name)
+                        .font(.title2).expandedHeavy()
+                        .foregroundStyle(.white)
+                    Spacer(minLength: 0)
+                    Image(systemName: "trophy.fill")
+                        .font(.title3)
+                        .foregroundStyle(Theme.gold)
+                } else {
+                    Text("Not decided yet")
+                        .font(.title3).fontWeight(.semibold)
+                        .foregroundStyle(Theme.textSecondary)
+                    Spacer(minLength: 0)
+                }
             }
         }
-        .font(.subheadline)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(Capsule().fill(.quaternary.opacity(0.5)))
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 18).fill(
+                champion == nil
+                ? AnyShapeStyle(Theme.card)
+                : AnyShapeStyle(LinearGradient(
+                    colors: [Theme.gold.opacity(0.22), Theme.accentPurple.opacity(0.22)],
+                    startPoint: .leading, endPoint: .trailing))
+            )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(champion == nil ? Theme.cardStroke : Theme.gold.opacity(0.4), lineWidth: 1)
+        )
+        .frame(width: 520)
     }
 }
 

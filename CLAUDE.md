@@ -175,6 +175,11 @@ Concrete homes for each required wrapper:
 
 ## Screens (6)
 
+Top-level navigation is a `TabView` (`Views/RootTabView.swift`): Bracket / Teams /
+Picks / Score, each tab its own `NavigationStack`. Match detail is a `.sheet` from
+the bracket (the 3.5 anchor — kept as a sheet, not a push); team detail is a
+`NavigationLink` push inside the Teams tab.
+
 1. **Bracket overview** — scrollable tree view of all 16 teams collapsing toward
    a champion. Visual centerpiece. Built from `BracketEngine`'s tree.
 2. **Match detail** — tap a match, see both teams, pick a winner via `WinnerPicker`
@@ -264,7 +269,18 @@ A commit can't contain its own SHA, so backfill SHAs later or just leave them of
   (`replayPersistedPredictions`, bottom-up). Flag PNGs landed before this phase;
   imagesets were renamed to the `flag_<country>` convention in commit `de683d6`.
   _Done when:_ picking a winner updates the bracket overview and survives relaunch.
-- **Phase 5 — Predictions + Score summary.** `@Query` list, editing, score breakdown.
+- **Phase 5 — Predictions + Score summary.** ✅ COMPLETE. `@Query` list, editing,
+  score breakdown, plus the tab shell and the dark restyle imported from Jose's
+  claude.ai/design mockup. The app root is now `RootTabView` — a `TabView` with three
+  tabs (Bracket / Picks / Score); the Teams tab is added in Phase 6 so no placeholder
+  ships. Shared visual language lives in `Views/Theme.swift` (dark palette, accent
+  gradient, `BracketBackground`, `GlassCard`, `.expandedHeavy()`); all pure SwiftUI,
+  SF Pro approximates Archivo Expanded, real PNG flags kept. The engine is now built
+  once at app launch (in `FIFA2026WorldCupApp.init`) so any tab works first.
+  "Official results" are a **labelled demo outcome** (`BracketEngine.demoActualWinnerSeeds`,
+  matching the mockup's `ACTUALS`) revealed/hidden from the Score screen; the real
+  2026 knockouts haven't happened. `syncPredictionsToStore` became `syncToStore`
+  (mirrors both `predictedWinner` and `actualWinner`).
   _Done when:_ entering actual results produces a correct score by round.
 - **Phase 6 — Team browser + Team detail + polish.** Grid/list, `NavigationLink`,
   visual consistency pass, empty states.

@@ -24,9 +24,11 @@ struct RoundColumnView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Text(BracketEngine.roundName(round))
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
+            Text(BracketEngine.roundName(round).uppercased())
+                .font(.caption2)
+                .fontWeight(.bold)
+                .tracking(1.2)
+                .foregroundStyle(Theme.textSecondary)
                 .frame(height: headerHeight)
 
             VStack(spacing: 0) {
@@ -57,4 +59,5 @@ struct RoundColumnView: View {
         headerHeight: 28
     )
     .padding()
+    .bracketBackground()
 }

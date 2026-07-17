@@ -2,7 +2,7 @@
 //  WinnerPicker.swift
 //  FIFA2026WorldCup
 //
-//  Phase 4 — Match detail.
+//  Phase 4 — Match detail. Restyled for the dark theme in Phase 5.
 //
 //  THE @Binding anchor example (Objective 3.6): this child view does not own the
 //  selection — it reads AND WRITES its parent's @State through the binding. Tapping
@@ -21,16 +21,16 @@ struct WinnerPicker: View {
     @Binding var selection: Team?
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             TeamPickButton(
                 team: node.teamA,
                 isSelected: isSelected(node.teamA),
                 action: { selection = node.teamA }
             )
 
-            Text("vs")
-                .font(.headline)
-                .foregroundStyle(.secondary)
+            Text("VS")
+                .font(.subheadline).expandedHeavy()
+                .foregroundStyle(Theme.textTertiary)
 
             TeamPickButton(
                 team: node.teamB,
@@ -56,43 +56,40 @@ struct TeamPickButton: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
-                FlagView(team: team, width: 63, height: 45)
+                FlagView(team: team, width: 64, height: 46)
 
                 if let team {
                     Text(team.name)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.subheadline).fontWeight(.bold)
+                        .foregroundStyle(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-                    Text("Group \(team.group) · Seed \(team.seed)")
+                    Text("Seed #\(team.seed) · Grp \(team.group)")
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Theme.textSecondary)
+                    Text(isSelected ? "✓ YOUR PICK" : "TAP TO PICK")
+                        .font(.caption2).fontWeight(.heavy)
+                        .foregroundStyle(isSelected ? Theme.pickTint : Theme.textTertiary)
+                        .padding(.top, 2)
                 } else {
                     Text("TBD")
-                        .font(.subheadline)
-                        .italic()
-                        .foregroundStyle(.tertiary)
+                        .font(.subheadline).italic()
+                        .foregroundStyle(Theme.textTertiary)
+                        .padding(.vertical, 18)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
+            .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.accentColor.opacity(0.12) : Color.clear)
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(isSelected ? Theme.pickTint.opacity(0.18) : Theme.card)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        isSelected ? Color.accentColor : Color.secondary.opacity(0.35),
-                        lineWidth: isSelected ? 2 : 1
-                    )
+                RoundedRectangle(cornerRadius: 18)
+                    .strokeBorder(isSelected ? Theme.pickTint : Theme.cardStroke,
+                                  lineWidth: isSelected ? 2 : 1)
             )
-            .overlay(alignment: .topTrailing) {
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.tint)
-                        .padding(6)
-                }
-            }
+            .shadow(color: isSelected ? Theme.pickTint.opacity(0.35) : .clear, radius: 12, y: 6)
         }
         .buttonStyle(.plain)
         .disabled(team == nil)
@@ -107,4 +104,5 @@ struct TeamPickButton: View {
 
     return WinnerPicker(node: engine.node(round: 0, slot: 0)!, selection: $selection)
         .padding()
+        .bracketBackground()
 }
