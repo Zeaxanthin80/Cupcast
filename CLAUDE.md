@@ -200,6 +200,12 @@ Concrete homes for each required wrapper:
   `Resources/` (flag assets, seed data JSON).
 - Seed the 16 teams with sample/preview data for SwiftUI previews — don't require
   a populated store to preview a view.
+- **Flag images are Jose's job, not Claude's.** Seed `flagAssetName` with real asset
+  names in the form `flag_<country>`, lowercase (e.g. `flag_argentina`); Jose adds
+  the matching PNGs to `Assets.xcassets` himself. Never generate placeholder images,
+  never invent a different naming scheme, and don't treat a missing PNG as a bug to
+  fix. Views that show flags must degrade gracefully when an asset is absent, so
+  previews and the simulator still render before the images land.
 - Prefer `guard let` for early returns over nested `if let`.
 - Keep view bodies small; extract subviews per 3.4 rather than writing long
   single-view bodies.
@@ -210,8 +216,15 @@ Concrete homes for each required wrapper:
 wait for review before starting the next. Each phase ends with a build that compiles
 and runs in the simulator, and a git commit.
 
-- **Phase 1 — Data layer.** `Team`, `Match`, `RoundScore`. `ModelContainer` wired in
-  the app entry point. Seed data for 16 teams + 15 matches.
+**Where the project stands is tracked inline below. The first phase not marked
+COMPLETE is the next one to build — never assume a phase needs redoing because some
+other note mentions it.** Mark a phase COMPLETE (with its commit SHA) as part of that
+phase's own commit.
+
+- **Phase 1 — Data layer.** ✅ COMPLETE — commit `856770d`. `Team`, `Match`,
+  `RoundScore`. `ModelContainer` wired in the app entry point. Seed data for 16
+  teams + 15 matches. Note: `Views/DebugStoreView.swift` is a throwaway verification
+  screen from this phase — delete it in Phase 3, don't build on it.
   _Done when:_ app launches, store populates, data verifiable via a temporary
   debug list.
 - **Phase 2 — BracketEngine.** `BracketNode`, tree construction, `advanceWinner`,
@@ -257,9 +270,8 @@ and runs in the simulator, and a git commit.
 - Confirm before restructuring the architecture described here — ask first if a
   change would affect the objective-domain mapping above.
 - After each phase, state which objective-domain items that phase satisfied.
-
----
-
----
-
-"Read CLAUDE.md, then implement Phase 1 (data layer only). For flags, I'll add the real images myself — seed flagAssetName with real asset names like flag_argentina and I'll drop the 16 PNGs into Assets.xcassets. Build, run in the simulator, and confirm the store populates before committing."
+- **This file holds standing rules only — never paste a one-off session prompt into
+  it.** A future session cannot tell a historical request from a live order, so a
+  leftover "implement Phase 1" reads as an instruction to redo finished work. If a
+  prompt contains something durable, write it down as a rule (see the flag-asset
+  convention) and record progress in the build plan instead.
