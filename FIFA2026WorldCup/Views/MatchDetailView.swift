@@ -36,7 +36,8 @@ struct MatchDetailView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 18) {
+                VStack(spacing: 32) {
+                    Spacer().frame(height: 12)
                     header
                     WinnerPicker(node: node, selection: $pickedWinner)
                     currentPickLine

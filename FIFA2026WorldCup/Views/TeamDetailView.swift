@@ -37,7 +37,7 @@ struct TeamDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedNode) { node in
             MatchDetailView(node: node)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
                 .presentationBackground(.black)
         }
     }
