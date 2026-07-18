@@ -18,16 +18,16 @@ struct BracketOverviewView: View {
     @Environment(BracketEngine.self) private var engine
     @Query(sort: [SortDescriptor(\Match.round), SortDescriptor(\Match.slot)])
     private var matches: [Match]
-
+    
     /// The match whose sheet is open (Objective 3.5 — .sheet(item:)). BracketNode
     /// is Identifiable, which is what item-based presentation needs.
     @State private var selectedNode: BracketNode?
-
+    
     // Shared layout constants — one height for every column is the invariant the
     // whole bracket geometry hangs on (see RoundColumnView / BracketConnector).
     private let headerHeight: CGFloat = 28
     private let matchAreaHeight: CGFloat = 672   // 8 slots × 84pt
-
+    
     var body: some View {
         Group {
             if engine.root == nil {
@@ -51,14 +51,14 @@ struct BracketOverviewView: View {
             engine.buildBracket(from: matches)
         }
     }
-
+    
     private var bracket: some View {
         // The banner is pinned OUTSIDE the scroll view: the bracket scrolls both
         // ways, and the champion should stay put rather than slide off to the side.
         VStack(alignment: .leading, spacing: 12) {
             championBanner
                 .padding(.horizontal)
-
+            
             ScrollView([.horizontal, .vertical]) {
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(0..<BracketEngine.roundCount, id: \.self) { round in
@@ -69,7 +69,7 @@ struct BracketOverviewView: View {
                             headerHeight: headerHeight,
                             onSelect: { selectedNode = $0 }
                         )
-
+                        
                         if round + 1 < BracketEngine.roundCount {
                             BracketConnectorColumn(
                                 pairCount: BracketEngine.slotCount(inRound: round + 1),
@@ -83,32 +83,55 @@ struct BracketOverviewView: View {
             }
         }
     }
-
+    
     private var championBanner: some View {
         let champion = engine.root.flatMap { engine.champion(of: $0) }
-        return VStack(alignment: .leading, spacing: 8) {
-            Text("YOUR PREDICTED CHAMPION")
-                .font(.caption2).fontWeight(.bold).tracking(1.4)
-                .foregroundStyle(Theme.textSecondary)
-
-            HStack(spacing: 12) {
-                FlagView(team: champion, width: 46, height: 33)
-
-                if let champion {
-                    Text(champion.name)
-                        .font(.title2).expandedHeavy()
-                        .foregroundStyle(.white)
-                    Spacer(minLength: 0)
-                    TrophyView(height: 44)
-                } else {
-                    Text("Not decided yet")
-                        .font(.title3).fontWeight(.semibold)
-                        .foregroundStyle(Theme.textSecondary)
-                    Spacer(minLength: 0)
+        return HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("YOUR PREDICTED CHAMPION")
+                    .font(.caption2).fontWeight(.bold).tracking(1.4)
+                    .foregroundStyle(Theme.textSecondary)
+                // .border(Theme.textSecondary.opacity(0.9), width: 1)
+                
+                HStack(spacing: 12) {
+                    FlagView(team: champion, width: 46, height: 33)
+                        .shadow(color: .black.opacity(0.4), radius: 2, x: 2, y: 2)
+                    
+                    if let champion {
+                        Text(champion.name)
+                            .font(.title2).expandedHeavy()
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.8), radius: 2, x: 2, y: 2)
+                        // .border(Color.black.opacity(0.9), width: 1)
+                        Spacer(minLength: 0)
+                        
+                    } else {
+                        Text("Not decided yet")
+                            .font(.title3).fontWeight(.semibold)
+                            .foregroundStyle(Theme.textSecondary)
+                        Spacer(minLength: 0)
+                    }
                 }
+                //.border(Theme.textSecondary.opacity(0.9), width: 1)
+                
             }
+            
+            if let champion {
+                
+                TrophyView(height: 76)
+                //.border(Theme.textSecondary.opacity(0.9), width: 1)
+            } else {
+                Text("Not decided yet")
+                    .font(.title3).fontWeight(.semibold)
+                    .foregroundStyle(Theme.textSecondary)
+                Spacer(minLength: 0)
+            }
+            
         }
-        .padding(16)
+        //  .border(Theme.textSecondary.opacity(0.9), width: 1)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .padding(.trailing, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 18).fill(
@@ -131,10 +154,10 @@ struct BracketOverviewView: View {
 #Preview("With picks") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Team.self, Match.self, configurations: config)
-
+    
     let engine = BracketEngine()
     engine.buildBracket(from: SeedData.makeTeams())
-
+    
     // Walk a full set of picks in: every favorite by seed, champion Argentina.
     for round in 0..<BracketEngine.roundCount {
         for node in engine.nodes(inRound: round) {
@@ -142,7 +165,7 @@ struct BracketOverviewView: View {
             engine.advanceWinner(for: node, to: teamA.seed < teamB.seed ? teamA : teamB)
         }
     }
-
+    
     return NavigationStack { BracketOverviewView() }
         .environment(engine)
         .modelContainer(container)
@@ -151,10 +174,10 @@ struct BracketOverviewView: View {
 #Preview("Fresh — no picks") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Team.self, Match.self, configurations: config)
-
+    
     let engine = BracketEngine()
     engine.buildBracket(from: SeedData.makeTeams())
-
+    
     return NavigationStack { BracketOverviewView() }
         .environment(engine)
         .modelContainer(container)
