@@ -4,6 +4,19 @@ Source artwork kept for regeneration. **Not part of the app target** — this fo
 sits beside `FIFA2026WorldCup/`, not inside it, so Xcode's file-system-synchronized
 group never picks it up and nothing here ships in the app bundle.
 
+## cupcast-banner-1408x768.png
+
+A wide CUPCAST promo banner (stadium, world map, bracket lines, flag badges).
+Kept for reference or future marketing use — it is **not** the in-app title.
+
+The title on the Bracket screen is `CupcastTitle` in `Views/Theme.swift`, drawn in
+SwiftUI so it inherits `Theme.accentGradient` and stays sharp at any size. This
+banner was not used for it: it is a full-bleed opaque scene rather than a wordmark,
+its royal-blue/gold palette is absent from the app (which runs pink → purple →
+cyan plus gold), its tagline is unreadable at title size, its flag badges and
+bracket shape do not match the app's actual 16 teams, and it renders FIFA
+prominently as branding.
+
 ## trophy-source-591x1500.png
 
 The full-resolution transparent World Cup trophy, 591×1500 with a real alpha

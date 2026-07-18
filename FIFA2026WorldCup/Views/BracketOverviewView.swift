@@ -37,8 +37,10 @@ struct BracketOverviewView: View {
             }
         }
         .bracketBackground()
-        .navigationTitle("The Bracket")
-        .navigationBarTitleDisplayMode(.large)
+        // The stylized CupcastTitle stands in for the navigation title on this
+        // screen, so the bar itself is left empty rather than showing both.
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedNode) { node in
             MatchDetailView(node: node)
                 .presentationDetents([.large])
@@ -56,6 +58,10 @@ struct BracketOverviewView: View {
         // The banner is pinned OUTSIDE the scroll view: the bracket scrolls both
         // ways, and the champion should stay put rather than slide off to the side.
         VStack(alignment: .leading, spacing: 12) {
+            CupcastTitle()
+                .padding(.horizontal)
+                .padding(.top, 4)
+
             championBanner
                 .padding(.horizontal)
             

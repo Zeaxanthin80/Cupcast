@@ -144,6 +144,48 @@ struct TrophyView: View {
     }
 }
 
+/// The app's stylized wordmark — "CUPCAST" over a small tagline.
+///
+/// Drawn entirely in SwiftUI rather than shipped as an image, so it inherits the
+/// app's own palette, stays sharp at any size, scales with Dynamic Type, and adds
+/// no asset to maintain. The gradient fill is the same `Theme.accentGradient` used
+/// by the Score hero and the primary buttons, which is what keeps the title
+/// visually part of the app instead of pasted on top of it.
+///
+/// `.overlay(...).mask(...)` is the SwiftUI idiom for gradient-filled text: the
+/// gradient is drawn over the layout and then clipped to the glyph shapes.
+struct CupcastTitle: View {
+    var size: CGFloat = 34
+    var showsTagline: Bool = true
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("CUPCAST")
+                .font(.system(size: size))
+                .expandedHeavy()
+                .tracking(size * 0.02)
+                .foregroundStyle(.clear)                 // the mask supplies the fill
+                .overlay { Theme.accentGradient }
+                .mask {
+                    Text("CUPCAST")
+                        .font(.system(size: size))
+                        .expandedHeavy()
+                        .tracking(size * 0.02)
+                }
+                .shadow(color: Theme.accentPurple.opacity(0.55), radius: size * 0.28)
+
+            if showsTagline {
+                Text("2026 PREDICTION BRACKET")
+                    .font(.system(size: size * 0.26, weight: .bold))
+                    .tracking(size * 0.055)
+                    .foregroundStyle(Theme.textSecondary)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Cupcast — 2026 prediction bracket")
+    }
+}
+
 /// A reusable glassy card surface (Objective 3.4 — extracted, reused everywhere).
 struct GlassCard<Content: View>: View {
     var cornerRadius: CGFloat = 15
