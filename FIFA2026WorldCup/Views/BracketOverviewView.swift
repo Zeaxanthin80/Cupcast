@@ -116,17 +116,13 @@ struct BracketOverviewView: View {
                 
             }
             
-            if let champion {
-                
+            // Trophy only once a champion is predicted. No `else` here: the
+            // "Not decided yet" placeholder already lives in the HStack above, and
+            // repeating it rendered the message twice side by side.
+            if champion != nil {
                 TrophyView(height: 76)
-                //.border(Theme.textSecondary.opacity(0.9), width: 1)
-            } else {
-                Text("Not decided yet")
-                    .font(.title3).fontWeight(.semibold)
-                    .foregroundStyle(Theme.textSecondary)
-                Spacer(minLength: 0)
             }
-            
+
         }
         //  .border(Theme.textSecondary.opacity(0.9), width: 1)
         .padding(.vertical, 12)
