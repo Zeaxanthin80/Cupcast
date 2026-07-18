@@ -220,6 +220,11 @@ the bracket (the 3.5 anchor — kept as a sheet, not a push); team detail is a
   never invent a different naming scheme, and don't treat a missing PNG as a bug to
   fix. Views that show flags must degrade gracefully when an asset is absent, so
   previews and the simulator still render before the images land.
+- **App icon** — `AppIcon.appiconset` holds a single opaque 1024×1024 `AppIcon.png`:
+  a soccer ball drawn programmatically (truncated icosahedron) over the app's own
+  dark background colors. One entry covers all appearances; the light/dark/tinted
+  slots were deliberately removed. It must stay opaque with no pre-rounded corners —
+  iOS applies the mask. Not a missing or placeholder asset; don't regenerate it.
 - Prefer `guard let` for early returns over nested `if let`.
 - Keep view bodies small; extract subviews per 3.4 rather than writing long
   single-view bodies.

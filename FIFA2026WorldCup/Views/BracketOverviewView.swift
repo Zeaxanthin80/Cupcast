@@ -41,7 +41,7 @@ struct BracketOverviewView: View {
         .navigationBarTitleDisplayMode(.large)
         .sheet(item: $selectedNode) { node in
             MatchDetailView(node: node)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
                 .presentationBackground(.black)
         }
         // Build once the store's matches are available. Keyed on the count so the
