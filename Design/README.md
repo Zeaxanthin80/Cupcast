@@ -4,6 +4,50 @@ Source artwork kept for regeneration. **Not part of the app target** — this fo
 sits beside `FIFA2026WorldCup/`, not inside it, so Xcode's file-system-synchronized
 group never picks it up and nothing here ships in the app bundle.
 
+## cupcast-wordmark-3d-1246x320.png  ← the good one
+
+Jose's 3D chrome CUPCAST wordmark with the ball set into the P, cleaned up for
+use: black background keyed out to real transparency, decorative sparkle removed,
+cropped tight. 1246×320 (3.89:1).
+
+Its colours were measured against `Theme` rather than eyeballed, and they land
+almost exactly on the app's ramp:
+
+| Theme            | nearest in artwork | distance |
+| ---------------- | ------------------ | -------- |
+| accentPink  `#FF2D78` | `#FD217D` | 13 |
+| accentPurple `#7C3AED` | `#742EEC` | 14 |
+| accentCyan  `#22D3EE` | `#27D1ED` |  5 |
+
+(Gold `#FBBF24` is absent, which is right — gold is reserved for the trophy and
+champion states.)
+
+`cupcast-wordmark-3d-source-1408x768.png` is the untouched original. It needed
+three fixes, none of which was vertical compression — squashing would have
+distorted the letterforms. What it needed was **cropping**: only 1222×435 of its
+1408×768 canvas held artwork, so 43% of the height was empty margin. It was also
+100% opaque (`hasAlpha: yes` merely means the channel exists), so it would have
+put a black rectangle on the app's gradient, and a stray sparkle in the lower
+right was setting the bounding box and sitting asymmetrically.
+
+Regenerate the cleaned version with:
+
+    swift keyblack.swift <source.png> <out.png> [cropAlpha]
+
+`keyblack.swift` flood-fills the black background inward from the borders, so only
+black *connected to the edge* is removed — the ball's dark pentagons and the
+letters' dark bevels are enclosed by bright pixels and survive, where a plain
+"dark → transparent" threshold would have punched straight through them. It then
+drops connected components far smaller than the main artwork (the sparkle) and
+crops. The default `cropAlpha` of 0.25 deliberately ignores a diffuse 15–30%-alpha
+halo that spreads well below the letters: invisible on a dark background, but it
+padded the asset by ~30% of its height.
+
+`analyze-image.swift` reports alpha coverage, true content bounds, dominant
+colours, and distance from each `Theme` colour — the tool behind the table above:
+
+    swift analyze-image.swift <image.png>
+
 ## cupcast-wordmark-2374x618.png  +  wordmark-generator.swift
 
 The elaborate CUPCAST wordmark: chrome/bevel lettering in the app's own palette
