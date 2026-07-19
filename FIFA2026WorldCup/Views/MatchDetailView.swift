@@ -50,21 +50,12 @@ struct MatchDetailView: View {
                 .padding()
             }
             .bracketBackground()
-            // The round already has a home in the gradient capsule below, so the bar
-            // carries the matchup instead of repeating it.
+            // The bar names the round, matching the bracket column this sheet was
+            // opened from, so the sheet says where you are in the hierarchy. The
+            // matchup lives in the capsule instead — see `header`.
+            .navigationTitle(BracketEngine.roundName(node.round))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // A plain .navigationTitle left-aligns once the text is too wide to
-                // centre beside the Cancel button — so short matchups centred and
-                // long ones didn't. Placing it in .principal keeps every matchup
-                // centred, and scaling down handles the longest pairings.
-                ToolbarItem(placement: .principal) {
-                    Text(matchupTitle)
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Cancel") { dismiss() }
                         .tint(Theme.textSecondary)
@@ -77,9 +68,13 @@ struct MatchDetailView: View {
 
     private var header: some View {
         VStack(spacing: 8) {
-            Text(BracketEngine.roundName(node.round).uppercased())
+            // The matchup in words, sitting directly above the same matchup in
+            // flags — the two read as one statement, one verbal and one graphic.
+            Text(matchupTitle.uppercased())
                 .font(.caption2).fontWeight(.heavy).tracking(1.2)
                 .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .padding(.horizontal, 12).padding(.vertical, 5)
                 .background(Capsule().fill(Theme.accentGradient))
 
