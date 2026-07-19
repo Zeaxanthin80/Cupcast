@@ -36,6 +36,25 @@ struct ScoreView: View {
         }
         .bracketBackground()
         .navigationTitle("Score")
+        .toolbar {
+            // Revealing results swaps this screen's content rather than pushing,
+            // so there's no system back button to return with. This stands in for
+            // one — same chevron and placement as the Teams → Team detail push —
+            // and does exactly what "Hide official results" at the bottom does,
+            // just without scrolling the whole breakdown to reach it.
+            if resultsIn {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        withAnimation { hideResults() }
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .fontWeight(.semibold)
+                    }
+                    .tint(.white)
+                    .accessibilityLabel("Hide official results")
+                }
+            }
+        }
     }
 
     // MARK: - Scored state
