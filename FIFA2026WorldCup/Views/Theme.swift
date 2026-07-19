@@ -29,40 +29,41 @@ extension Color {
 }
 
 enum Theme {
-
+    
     // MARK: Accent (the pink → purple → cyan gradient the mockup runs everywhere)
-
+    
     static let accentPink = Color(hex: 0xFF2D78)
     static let accentPurple = Color(hex: 0x7C3AED)
     static let accentCyan = Color(hex: 0x22D3EE)
-
+    
     static let accentGradient = LinearGradient(
         colors: [accentPink, accentPurple, accentCyan],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
-
+    
     // MARK: Semantic
-
+    
     static let gold = Color(hex: 0xFBBF24)
     static let success = Color(hex: 0x4ADE80)
     static let danger = Color(hex: 0xFB7185)
-
+    
     // MARK: Surfaces & text (white at varying opacity, on the dark background)
-
+    
     static let card = Color.white.opacity(0.05)
-    static let cardStroke = Color.white.opacity(0.09)
+    static let cardStroke = Color.white.opacity(0.1)
+    static let connectorStroke = Color.white.opacity(0.3)
     static let textSecondary = Color.white.opacity(0.55)
     static let textTertiary = Color.white.opacity(0.32)
-
+    
     /// Winner-pick highlight — cyan, the mockup's "active" color.
     static let pickTint = accentCyan
-
+    
     // MARK: Per-team national colors (from the mockup's TEAMS table)
     //
     // View-layer flavor only — deliberately NOT on the SwiftData Team model, which
     // CLAUDE.md fixes exactly. Keyed by flagAssetName, the team's stable string id.
-
+    
     static let teamColors: [String: Color] = [
         "flag_argentina": Color(hex: 0x75AADB),
         "flag_france": Color(hex: 0x3B5BA7),
@@ -81,7 +82,7 @@ enum Theme {
         "flag_egypt": Color(hex: 0xCE1126),
         "flag_paraguay": Color(hex: 0x3B6AB8),
     ]
-
+    
     static func color(for team: Team?) -> Color {
         guard let team else { return accentPurple }
         return teamColors[team.flagAssetName] ?? accentPurple
@@ -120,7 +121,7 @@ extension View {
     func bracketBackground() -> some View {
         background(BracketBackground())
     }
-
+    
     /// The Archivo-Expanded-ish display look: heavy weight, expanded width.
     func expandedHeavy() -> some View {
         fontWeight(.heavy).fontWidth(.expanded)
@@ -133,7 +134,7 @@ extension View {
 /// draw the same trophy.
 struct TrophyView: View {
     var height: CGFloat = 30
-
+    
     var body: some View {
         Image("trophy")
             .resizable()
@@ -157,7 +158,7 @@ struct TrophyView: View {
 struct CupcastTitle: View {
     var size: CGFloat = 34
     var showsTagline: Bool = true
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("CUPCAST")
@@ -173,7 +174,7 @@ struct CupcastTitle: View {
                         .tracking(size * 0.02)
                 }
                 .shadow(color: Theme.accentPurple.opacity(0.55), radius: size * 0.28)
-
+            
             if showsTagline {
                 Text("2026 PREDICTION BRACKET")
                     .font(.system(size: size * 0.26, weight: .bold))
@@ -195,7 +196,7 @@ struct CupcastTitle: View {
 /// chooses between them.
 struct CupcastWordmarkImage: View {
     var height: CGFloat = 54
-
+    
     var body: some View {
         Image("cupcast_wordmark")
             .resizable()
@@ -213,16 +214,16 @@ struct CupcastWordmarkImage: View {
 /// clear and 47% partial — so it blends into the gradient instead of sitting in a
 /// box, which is what makes it usable directly.
 struct CupcastBannerImage: View {
-    var height: CGFloat = 54
+    var height: CGFloat = 82
     var showsTagline: Bool = true
-
+    
     var body: some View {
-        VStack(spacing: height * 0.10) {
-            Image("banner")
+        VStack(spacing: height * 0.05) {
+            Image("cupcast_wordmark")
                 .resizable()
                 .scaledToFit()
                 .frame(height: height)
-
+            
             if showsTagline {
                 // Sized off the banner height so the pair stays proportional at
                 // any scale, and matched to CupcastTitle's tagline treatment.
@@ -230,8 +231,10 @@ struct CupcastBannerImage: View {
                     .font(.system(size: height * 0.17, weight: .bold))
                     .tracking(height * 0.036)
                     .foregroundStyle(Theme.textSecondary)
+                    .padding(.bottom, 16)
             }
         }
+      //  .border(.white.opacity(0.2), width: 1)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Cupcast — 2026 prediction bracket")
     }
@@ -252,7 +255,7 @@ enum CupcastTitleStyle {
 struct GlassCard<Content: View>: View {
     var cornerRadius: CGFloat = 15
     @ViewBuilder var content: Content
-
+    
     var body: some View {
         content
             .background(

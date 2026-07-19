@@ -48,7 +48,7 @@ struct BracketConnectorColumn: View {
 
     var body: some View {
         BracketConnector(pairCount: pairCount)
-            .stroke(Theme.cardStroke, lineWidth: 1.5)
+            .stroke(Theme.connectorStroke, lineWidth: 1.5)
             .frame(width: 24, height: matchAreaHeight)
             .padding(.top, headerHeight)   // skip past the round-name header row
     }

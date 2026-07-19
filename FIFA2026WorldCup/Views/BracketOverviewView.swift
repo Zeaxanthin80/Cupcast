@@ -144,14 +144,14 @@ struct BracketOverviewView: View {
             // "Not decided yet" placeholder already lives in the HStack above, and
             // repeating it rendered the message twice side by side.
             if champion != nil {
-                TrophyView(height: 76)
+                TrophyView(height: 82)
             }
 
         }
         //  .border(Theme.textSecondary.opacity(0.9), width: 1)
         .padding(.vertical, 12)
         .padding(.horizontal, 16)
-        .padding(.trailing, 8)
+        .padding(.trailing, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 18).fill(

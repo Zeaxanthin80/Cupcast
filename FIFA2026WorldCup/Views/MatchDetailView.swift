@@ -50,9 +50,21 @@ struct MatchDetailView: View {
                 .padding()
             }
             .bracketBackground()
-            .navigationTitle(BracketEngine.roundName(node.round))
+            // The round already has a home in the gradient capsule below, so the bar
+            // carries the matchup instead of repeating it.
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                // A plain .navigationTitle left-aligns once the text is too wide to
+                // centre beside the Cancel button — so short matchups centred and
+                // long ones didn't. Placing it in .principal keeps every matchup
+                // centred, and scaling down handles the longest pairings.
+                ToolbarItem(placement: .principal) {
+                    Text(matchupTitle)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Cancel") { dismiss() }
                         .tint(Theme.textSecondary)
@@ -167,6 +179,16 @@ struct MatchDetailView: View {
 
     private var pointsForRound: Int {
         [1, 2, 4, 8][safe: node.round] ?? 0
+    }
+
+    /// "Argentina vs Paraguay" once both teams are known. Later rounds open with
+    /// their slots still empty, so those fall back to the match number rather than
+    /// showing "TBD vs TBD" (Objective 2.6 — optional binding driving the copy).
+    private var matchupTitle: String {
+        guard let a = node.teamA, let b = node.teamB else {
+            return "Match \(node.slot + 1)"
+        }
+        return "\(a.name) vs \(b.name)"
     }
 
     // MARK: - Actions
