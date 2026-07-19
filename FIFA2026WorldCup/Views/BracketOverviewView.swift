@@ -15,10 +15,15 @@ import SwiftUI
 import SwiftData
 
 struct BracketOverviewView: View {
+    /// Which title treatment to draw. Defaults to the SwiftUI text version, so the
+    /// shipping app is unaffected; `CupcastTitleComparison` passes `.image` to see
+    /// the artwork in this same screen.
+    var titleStyle: CupcastTitleStyle = .text
+
     @Environment(BracketEngine.self) private var engine
     @Query(sort: [SortDescriptor(\Match.round), SortDescriptor(\Match.slot)])
     private var matches: [Match]
-    
+
     /// The match whose sheet is open (Objective 3.5 — .sheet(item:)). BracketNode
     /// is Identifiable, which is what item-based presentation needs.
     @State private var selectedNode: BracketNode?
@@ -58,7 +63,7 @@ struct BracketOverviewView: View {
         // The banner is pinned OUTSIDE the scroll view: the bracket scrolls both
         // ways, and the champion should stay put rather than slide off to the side.
         VStack(alignment: .leading, spacing: 12) {
-            CupcastTitle()
+            titleView
                 .padding(.horizontal)
                 .padding(.top, 4)
 
@@ -90,6 +95,15 @@ struct BracketOverviewView: View {
         }
     }
     
+    @ViewBuilder
+    private var titleView: some View {
+        switch titleStyle {
+        case .text:   CupcastTitle()
+        case .image:  CupcastWordmarkImage()
+        case .banner: CupcastBannerImage()
+        }
+    }
+
     private var championBanner: some View {
         let champion = engine.root.flatMap { engine.champion(of: $0) }
         return HStack(spacing: 12) {

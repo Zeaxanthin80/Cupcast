@@ -26,10 +26,10 @@ enum SlotResult {
 struct MatchCardView: View {
     let node: BracketNode
 
-    static let width: CGFloat = 168
+    static let width: CGFloat = 240 //168
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 2) {
             TeamSlotView(team: node.teamA,
                          isPicked: isPicked(node.teamA),
                          result: result(for: node.teamA))
@@ -42,10 +42,14 @@ struct MatchCardView: View {
         .background(
             RoundedRectangle(cornerRadius: 13).fill(Theme.card)
         )
+        
         .overlay(
             RoundedRectangle(cornerRadius: 13).strokeBorder(Theme.cardStroke, lineWidth: 1)
         )
+        
         .clipShape(RoundedRectangle(cornerRadius: 13))
+        
+       //.padding(.vertical, 24)
     }
 
     private func isPicked(_ team: Team?) -> Bool {
@@ -74,7 +78,7 @@ struct TeamSlotView: View {
     var result: SlotResult = .none
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             FlagView(team: team)
 
             if let team {
@@ -95,8 +99,9 @@ struct TeamSlotView: View {
                 Spacer(minLength: 2)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 7)
+        .padding(.horizontal,12) //8
+        .padding(.vertical, 7) //7
+        
         .background(rowBackground)
         .overlay(alignment: .leading) {
             if let bar = accentBar {
@@ -164,7 +169,7 @@ struct TeamSlotView: View {
     let picked = engine.node(round: 0, slot: 0)!
     engine.advanceWinner(for: picked, to: picked.teamA!)
 
-    return VStack(spacing: 12) {
+    return VStack(spacing: 12)  { //12
         MatchCardView(node: picked)                            // has a pick
         MatchCardView(node: engine.node(round: 0, slot: 1)!)   // no pick yet
         MatchCardView(node: engine.node(round: 2, slot: 0)!)   // both TBD

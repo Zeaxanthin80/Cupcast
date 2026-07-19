@@ -186,6 +186,55 @@ struct CupcastTitle: View {
     }
 }
 
+/// The wordmark as artwork: Jose's 3D chrome lettering with the ball set into the
+/// P, cleaned to real transparency so it sits on the gradient with no box.
+///
+/// Sized by height like TrophyView, since it's a wide image and the width should
+/// follow its aspect (roughly 3.9:1). Contrast with `CupcastTitle`, which draws the
+/// same wordmark in live text — see `CupcastTitleStyle` for how the bracket screen
+/// chooses between them.
+struct CupcastWordmarkImage: View {
+    var height: CGFloat = 54
+
+    var body: some View {
+        Image("cupcast_wordmark")
+            .resizable()
+            .scaledToFit()
+            .frame(height: height)
+            .accessibilityLabel("Cupcast")
+    }
+}
+
+/// The wide banner lockup: CUPCAST with a trophy in the U, a star in the A, and a
+/// ball at each end, over light streaks.
+///
+/// Very wide (about 6.8:1), so a height of ~54 makes it span a phone's width. Its
+/// streaked background is genuinely semi-transparent — 29% of the file is fully
+/// clear and 47% partial — so it blends into the gradient instead of sitting in a
+/// box, which is what makes it usable directly.
+struct CupcastBannerImage: View {
+    var height: CGFloat = 54
+
+    var body: some View {
+        Image("banner")
+            .resizable()
+            .scaledToFit()
+            .frame(height: height)
+            .accessibilityLabel("Cupcast")
+    }
+}
+
+/// Which treatment the bracket screen uses for its title.
+///
+/// Exists so the candidates can be compared in the real screen rather than in
+/// isolation — see `CupcastTitleComparison`. `.text` is the shipping default: it
+/// scales with Dynamic Type and stays sharp at any size.
+enum CupcastTitleStyle {
+    case text      // CupcastTitle — live SwiftUI text
+    case image     // CupcastWordmarkImage — the 3D chrome artwork
+    case banner    // CupcastBannerImage — the wide streaked lockup
+}
+
 /// A reusable glassy card surface (Objective 3.4 — extracted, reused everywhere).
 struct GlassCard<Content: View>: View {
     var cornerRadius: CGFloat = 15
