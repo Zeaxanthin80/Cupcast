@@ -1,6 +1,6 @@
 //
 //  RootTabView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 5 — top-level navigation.
 //

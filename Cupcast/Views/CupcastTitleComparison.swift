@@ -1,6 +1,6 @@
 //
 //  CupcastTitleComparison.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  ⚠️ DESIGN HARNESS — not part of the shipping UI. Nothing in the app navigates
 //  here; it exists so the CUPCAST title treatments can be judged inside the real

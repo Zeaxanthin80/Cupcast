@@ -1,6 +1,6 @@
 //
 //  TeamDetailView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 6 — Team detail. Screen 6 of 6, pushed from the browser via
 //  NavigationLink (Objective 3.5).

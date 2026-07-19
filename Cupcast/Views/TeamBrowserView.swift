@@ -1,6 +1,6 @@
 //
 //  TeamBrowserView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 6 — Team browser (the "Teams" tab). Screen 5 of 6.
 //

@@ -1,6 +1,6 @@
 //
 //  Match.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 1 — Data layer.
 //

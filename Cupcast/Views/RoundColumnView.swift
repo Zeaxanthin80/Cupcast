@@ -1,6 +1,6 @@
 //
 //  RoundColumnView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 3 — Bracket overview.
 //

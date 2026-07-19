@@ -1,6 +1,6 @@
 //
 //  MatchCardView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 3 — Bracket overview. Restyled for the dark theme in Phase 5.
 //

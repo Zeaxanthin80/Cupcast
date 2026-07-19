@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		CE881C04300417D8007AC9FF /* FIFA2026WorldCup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FIFA2026WorldCup.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE881C04300417D8007AC9FF /* Cupcast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cupcast.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		CE881C06300417D8007AC9FF /* FIFA2026WorldCup */ = {
+		CE881C06300417D8007AC9FF /* Cupcast */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = FIFA2026WorldCup;
+			path = Cupcast;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		CE881BFB300417D8007AC9FF = {
 			isa = PBXGroup;
 			children = (
-				CE881C06300417D8007AC9FF /* FIFA2026WorldCup */,
+				CE881C06300417D8007AC9FF /* Cupcast */,
 				CE881C05300417D8007AC9FF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +40,7 @@
 		CE881C05300417D8007AC9FF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CE881C04300417D8007AC9FF /* FIFA2026WorldCup.app */,
+				CE881C04300417D8007AC9FF /* Cupcast.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CE881C03300417D8007AC9FF /* FIFA2026WorldCup */ = {
+		CE881C03300417D8007AC9FF /* Cupcast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CE881C0F300417D8007AC9FF /* Build configuration list for PBXNativeTarget "FIFA2026WorldCup" */;
+			buildConfigurationList = CE881C0F300417D8007AC9FF /* Build configuration list for PBXNativeTarget "Cupcast" */;
 			buildPhases = (
 				CE881C00300417D8007AC9FF /* Sources */,
 				CE881C01300417D8007AC9FF /* Frameworks */,
@@ -61,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				CE881C06300417D8007AC9FF /* FIFA2026WorldCup */,
+				CE881C06300417D8007AC9FF /* Cupcast */,
 			);
-			name = FIFA2026WorldCup;
+			name = Cupcast;
 			packageProductDependencies = (
 			);
-			productName = FIFA2026WorldCup;
-			productReference = CE881C04300417D8007AC9FF /* FIFA2026WorldCup.app */;
+			productName = Cupcast;
+			productReference = CE881C04300417D8007AC9FF /* Cupcast.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CE881BFF300417D8007AC9FF /* Build configuration list for PBXProject "FIFA2026WorldCup" */;
+			buildConfigurationList = CE881BFF300417D8007AC9FF /* Build configuration list for PBXProject "Cupcast" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CE881C03300417D8007AC9FF /* FIFA2026WorldCup */,
+				CE881C03300417D8007AC9FF /* Cupcast */,
 			);
 		};
 /* End PBXProject section */
@@ -264,7 +264,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jose.FIFA2026WorldCup;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jose.Cupcast;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -296,7 +296,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jose.FIFA2026WorldCup;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jose.Cupcast;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -311,7 +311,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CE881BFF300417D8007AC9FF /* Build configuration list for PBXProject "FIFA2026WorldCup" */ = {
+		CE881BFF300417D8007AC9FF /* Build configuration list for PBXProject "Cupcast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CE881C0D300417D8007AC9FF /* Debug */,
@@ -320,7 +320,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CE881C0F300417D8007AC9FF /* Build configuration list for PBXNativeTarget "FIFA2026WorldCup" */ = {
+		CE881C0F300417D8007AC9FF /* Build configuration list for PBXNativeTarget "Cupcast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CE881C10300417D8007AC9FF /* Debug */,

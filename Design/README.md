@@ -1,7 +1,7 @@
 # Design sources
 
 Source artwork kept for regeneration. **Not part of the app target** — this folder
-sits beside `FIFA2026WorldCup/`, not inside it, so Xcode's file-system-synchronized
+sits beside `Cupcast/`, not inside it, so Xcode's file-system-synchronized
 group never picks it up and nothing here ships in the app bundle.
 
 ## cupcast-wordmark-3d-1246x320.png  ← the good one
@@ -83,7 +83,7 @@ prominently as branding.
 The full-resolution transparent World Cup trophy, 591×1500 with a real alpha
 channel.
 
-The shipped asset (`FIFA2026WorldCup/Assets.xcassets/trophy.imageset/trophy.png`)
+The shipped asset (`Cupcast/Assets.xcassets/trophy.imageset/trophy.png`)
 is a 236×600 downscale of this file — fine for its on-screen sizes (30–96pt), but
 too small to enlarge later without going soft. Keep this file if the trophy ever
 needs to be re-exported bigger.

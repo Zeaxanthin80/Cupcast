@@ -281,7 +281,7 @@ A commit can't contain its own SHA, so backfill SHAs later or just leave them of
   ships. Shared visual language lives in `Views/Theme.swift` (dark palette, accent
   gradient, `BracketBackground`, `GlassCard`, `.expandedHeavy()`); all pure SwiftUI,
   SF Pro approximates Archivo Expanded, real PNG flags kept. The engine is now built
-  once at app launch (in `FIFA2026WorldCupApp.init`) so any tab works first.
+  once at app launch (in `CupcastApp.init`) so any tab works first.
   "Official results" are a **labelled demo outcome** (`BracketEngine.demoActualWinnerSeeds`,
   matching the mockup's `ACTUALS`) revealed/hidden from the Score screen; the real
   2026 knockouts haven't happened. `syncPredictionsToStore` became `syncToStore`

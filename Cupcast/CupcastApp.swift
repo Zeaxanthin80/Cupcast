@@ -1,6 +1,6 @@
 //
-//  FIFA2026WorldCupApp.swift
-//  FIFA2026WorldCup
+//  CupcastApp.swift
+//  Cupcast
 //
 //  Created by user on 7/12/26.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct FIFA2026WorldCupApp: App {
+struct CupcastApp: App {
     // The SwiftData container is created once and seeded on first launch.
     let container: ModelContainer
 

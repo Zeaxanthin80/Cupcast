@@ -1,6 +1,6 @@
 //
 //  PredictionsView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 5 — Predictions (the "Picks" tab). Screen 3 of 6.
 //

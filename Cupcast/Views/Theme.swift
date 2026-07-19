@@ -1,6 +1,6 @@
 //
 //  Theme.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 5 — shared visual language.
 //

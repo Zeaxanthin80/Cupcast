@@ -1,6 +1,6 @@
 //
 //  ScoreView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 5 — Score summary (the "Score" tab). Screen 4 of 6.
 //

@@ -1,6 +1,6 @@
 //
 //  MatchDetailView.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 4 — Match detail. Restyled for the dark theme in Phase 5.
 //

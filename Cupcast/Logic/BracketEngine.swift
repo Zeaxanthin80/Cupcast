@@ -1,6 +1,6 @@
 //
 //  BracketEngine.swift
-//  FIFA2026WorldCup
+//  Cupcast
 //
 //  Phase 2 — BracketEngine.
 //
