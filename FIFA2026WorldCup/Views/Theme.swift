@@ -214,13 +214,26 @@ struct CupcastWordmarkImage: View {
 /// box, which is what makes it usable directly.
 struct CupcastBannerImage: View {
     var height: CGFloat = 54
+    var showsTagline: Bool = true
 
     var body: some View {
-        Image("banner")
-            .resizable()
-            .scaledToFit()
-            .frame(height: height)
-            .accessibilityLabel("Cupcast")
+        VStack(spacing: height * 0.10) {
+            Image("banner")
+                .resizable()
+                .scaledToFit()
+                .frame(height: height)
+
+            if showsTagline {
+                // Sized off the banner height so the pair stays proportional at
+                // any scale, and matched to CupcastTitle's tagline treatment.
+                Text("2026 PREDICTION BRACKET")
+                    .font(.system(size: height * 0.17, weight: .bold))
+                    .tracking(height * 0.036)
+                    .foregroundStyle(Theme.textSecondary)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Cupcast — 2026 prediction bracket")
     }
 }
 

@@ -3,10 +3,12 @@
 //  FIFA2026WorldCup
 //
 //  ⚠️ DESIGN HARNESS — not part of the shipping UI. Nothing in the app navigates
-//  here; it exists so the two CUPCAST title treatments can be judged inside the
-//  real bracket screen instead of in isolation. Safe to delete once the call is
-//  made (and delete `cupcast_wordmark.imageset` too if `.text` wins, since that
-//  asset is otherwise unused).
+//  here; it exists so the CUPCAST title treatments can be judged inside the real
+//  bracket screen instead of in isolation.
+//
+//  The call has been made: `.banner` ships (see BracketOverviewView's default).
+//  This file and `cupcast_wordmark.imageset` are now only kept for reference —
+//  deleting both is safe and reclaims ~540 KB, since nothing else uses that asset.
 //
 //  The three candidates:
 //    .text    CupcastTitle         — live SwiftUI text on Theme.accentGradient.
@@ -54,7 +56,9 @@ struct CupcastTitleComparison: View {
                 Divider().overlay(Theme.cardStroke)
 
                 sectionLabel("Banner at a range of heights")
-                sizeLadder([72, 54, 40, 28]) { CupcastBannerImage(height: $0) }
+                sizeLadder([72, 54, 40, 28]) {
+                    CupcastBannerImage(height: $0, showsTagline: false)
+                }
 
                 Divider().overlay(Theme.cardStroke)
 

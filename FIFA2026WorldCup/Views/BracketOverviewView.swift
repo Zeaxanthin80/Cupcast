@@ -15,10 +15,10 @@ import SwiftUI
 import SwiftData
 
 struct BracketOverviewView: View {
-    /// Which title treatment to draw. Defaults to the SwiftUI text version, so the
-    /// shipping app is unaffected; `CupcastTitleComparison` passes `.image` to see
-    /// the artwork in this same screen.
-    var titleStyle: CupcastTitleStyle = .text
+    /// Which title treatment to draw. `.banner` is the shipping choice, picked by
+    /// comparing all three in this very screen — see `CupcastTitleComparison`,
+    /// which passes the others.
+    var titleStyle: CupcastTitleStyle = .banner
 
     @Environment(BracketEngine.self) private var engine
     @Query(sort: [SortDescriptor(\Match.round), SortDescriptor(\Match.slot)])
@@ -63,7 +63,11 @@ struct BracketOverviewView: View {
         // The banner is pinned OUTSIDE the scroll view: the bracket scrolls both
         // ways, and the champion should stay put rather than slide off to the side.
         VStack(alignment: .leading, spacing: 12) {
+            // maxWidth centres the lockup inside this leading-aligned stack, so the
+            // banner sits over the middle of the champion card rather than hugging
+            // the left edge.
             titleView
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal)
                 .padding(.top, 4)
 
