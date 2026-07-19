@@ -1,8 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "cupcast_wordmark.png",
-      "idiom" : "universal"
+      "filename" : "cupcast_logo.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
