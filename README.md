@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Design/cupcast-wordmark-3d-1246x320.png" alt="Cupcast" width="520">
+  <img src="Design/cupcast_logo.png" alt="Cupcast" width="520">
 </p>
 
 <p align="center"><strong>2026 Prediction Bracket</strong></p>
