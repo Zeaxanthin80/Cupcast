@@ -36,26 +36,34 @@ enum SeedData {
 
     // MARK: - Teams
 
-    /// The 16 Round-of-16 teams. Seed = rough FIFA strength (1 strongest).
+    /// The 16 Round-of-16 teams, reseeded to reproduce the real 2026 knockout
+    /// bracket (traced from FIFA's official bracket graphic — Paraguay/France,
+    /// Canada/Morocco, Portugal/Spain, USA/Belgium, Brazil/Norway, Mexico/England,
+    /// Argentina/Egypt, Switzerland/Colombia, through to Spain's Final win over
+    /// Argentina). `r16SeedPairings`' formula (1v16, 8v9, 5v12, …) is unchanged —
+    /// only which team holds which seed number changed, chosen so the formula
+    /// reproduces these exact eight matchups in the same slots FIFA drew them.
+    /// Seeds 1–4 are the teams that went further (champion, runner-up, 3rd, 4th);
+    /// within each Round-of-16 pair the winner got the lower number.
     /// Groups A–H (2 teams each) are arranged so no group-mates meet in the R16.
     static func makeTeams() -> [Team] {
         [
-            Team(name: "Argentina",   flagAssetName: "flag_argentina",   seed: 1,  group: "A"),
-            Team(name: "France",      flagAssetName: "flag_france",      seed: 2,  group: "H"),
-            Team(name: "England",     flagAssetName: "flag_england",     seed: 3,  group: "B"),
-            Team(name: "Brazil",      flagAssetName: "flag_brazil",      seed: 4,  group: "G"),
-            Team(name: "Portugal",    flagAssetName: "flag_portugal",    seed: 5,  group: "E"),
-            Team(name: "Spain",       flagAssetName: "flag_spain",       seed: 6,  group: "D"),
-            Team(name: "Belgium",     flagAssetName: "flag_belgium",     seed: 7,  group: "F"),
-            Team(name: "Morocco",     flagAssetName: "flag_morocco",     seed: 8,  group: "C"),
-            Team(name: "USA",         flagAssetName: "flag_usa",         seed: 9,  group: "D"),
-            Team(name: "Mexico",      flagAssetName: "flag_mexico",      seed: 10, group: "E"),
-            Team(name: "Switzerland", flagAssetName: "flag_switzerland", seed: 11, group: "C"),
-            Team(name: "Colombia",    flagAssetName: "flag_colombia",    seed: 12, group: "F"),
-            Team(name: "Canada",      flagAssetName: "flag_canada",      seed: 13, group: "H"),
-            Team(name: "Norway",      flagAssetName: "flag_norway",      seed: 14, group: "A"),
-            Team(name: "Egypt",       flagAssetName: "flag_egypt",       seed: 15, group: "G"),
-            Team(name: "Paraguay",    flagAssetName: "flag_paraguay",    seed: 16, group: "B"),
+            Team(name: "France",      flagAssetName: "flag_france",      seed: 1,  group: "A"),
+            Team(name: "Switzerland", flagAssetName: "flag_switzerland", seed: 2,  group: "B"),
+            Team(name: "Norway",      flagAssetName: "flag_norway",      seed: 3,  group: "C"),
+            Team(name: "Belgium",     flagAssetName: "flag_belgium",     seed: 4,  group: "D"),
+            Team(name: "Spain",       flagAssetName: "flag_spain",       seed: 5,  group: "E"),
+            Team(name: "England",     flagAssetName: "flag_england",     seed: 6,  group: "F"),
+            Team(name: "Argentina",   flagAssetName: "flag_argentina",   seed: 7,  group: "G"),
+            Team(name: "Morocco",     flagAssetName: "flag_morocco",     seed: 8,  group: "H"),
+            Team(name: "Canada",      flagAssetName: "flag_canada",      seed: 9,  group: "A"),
+            Team(name: "Egypt",       flagAssetName: "flag_egypt",       seed: 10, group: "B"),
+            Team(name: "Mexico",      flagAssetName: "flag_mexico",      seed: 11, group: "C"),
+            Team(name: "Portugal",    flagAssetName: "flag_portugal",    seed: 12, group: "D"),
+            Team(name: "USA",         flagAssetName: "flag_usa",         seed: 13, group: "E"),
+            Team(name: "Brazil",      flagAssetName: "flag_brazil",      seed: 14, group: "F"),
+            Team(name: "Colombia",    flagAssetName: "flag_colombia",    seed: 15, group: "G"),
+            Team(name: "Paraguay",    flagAssetName: "flag_paraguay",    seed: 16, group: "H"),
         ]
     }
 

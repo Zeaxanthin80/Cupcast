@@ -176,7 +176,7 @@ struct MatchDetailView: View {
         [1, 2, 4, 8][safe: node.round] ?? 0
     }
 
-    /// "Argentina vs Paraguay" once both teams are known. Later rounds open with
+    /// "France vs Paraguay" once both teams are known. Later rounds open with
     /// their slots still empty, so those fall back to the match number rather than
     /// showing "TBD vs TBD" (Objective 2.6 — optional binding driving the copy).
     private var matchupTitle: String {

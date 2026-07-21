@@ -178,7 +178,7 @@ struct BracketOverviewView: View {
     let engine = BracketEngine()
     engine.buildBracket(from: SeedData.makeTeams())
     
-    // Walk a full set of picks in: every favorite by seed, champion Argentina.
+    // Walk a full set of picks in: every favorite by seed, champion France (seed 1).
     for round in 0..<BracketEngine.roundCount {
         for node in engine.nodes(inRound: round) {
             guard let teamA = node.teamA, let teamB = node.teamB else { continue }

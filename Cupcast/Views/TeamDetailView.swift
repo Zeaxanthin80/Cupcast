@@ -236,7 +236,7 @@ struct TeamDetailView: View {
     let engine = BracketEngine()
     let matches = (try? container.mainContext.fetch(FetchDescriptor<Match>())) ?? []
     engine.buildBracket(from: matches)
-    // Pick Argentina through to the title so the path + champion card show.
+    // Pick the seed-1 team through to the title so the path + champion card show.
     for round in 0..<BracketEngine.roundCount {
         for node in engine.nodes(inRound: round) {
             guard let a = node.teamA, let b = node.teamB else { continue }
@@ -244,10 +244,10 @@ struct TeamDetailView: View {
         }
     }
 
-    let argentina = (try? container.mainContext.fetch(FetchDescriptor<Team>()))?
+    let champion = (try? container.mainContext.fetch(FetchDescriptor<Team>()))?
         .first { $0.seed == 1 }
 
-    return NavigationStack { TeamDetailView(team: argentina!) }
+    return NavigationStack { TeamDetailView(team: champion!) }
         .environment(engine)
         .modelContainer(container)
 }
