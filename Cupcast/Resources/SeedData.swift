@@ -43,8 +43,11 @@ enum SeedData {
     /// Argentina). `r16SeedPairings`' formula (1v16, 8v9, 5v12, …) is unchanged —
     /// only which team holds which seed number changed, chosen so the formula
     /// reproduces these exact eight matchups in the same slots FIFA drew them.
-    /// Seeds 1–4 are the teams that went further (champion, runner-up, 3rd, 4th);
-    /// within each Round-of-16 pair the winner got the lower number.
+    /// Seed number reflects only each team's own Round-of-16 pair, not how far
+    /// they went afterward: within each pair the winner got the lower of that
+    /// pair's two formula numbers (e.g. pair (1,16) was France/Paraguay, France
+    /// won it, so France = 1) — it is not a final-standing ranking. Spain, the
+    /// actual champion, is seed 5; France, eliminated in the Semifinal, is seed 1.
     /// Groups A–H (2 teams each) are arranged so no group-mates meet in the R16.
     static func makeTeams() -> [Team] {
         [

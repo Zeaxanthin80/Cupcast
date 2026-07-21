@@ -285,19 +285,22 @@ final class BracketEngine {
         }
     }
 
-    // MARK: - Official results (demo)
+    // MARK: - Official results
     //
     // CLAUDE.md's concept scores the bracket "once real results are entered" but
-    // never said how they get in. The mockup answers with a "reveal official
-    // results" toggle over a fixed outcome table, so that is what this is: a
-    // DEMONSTRATION outcome (the real 2026 knockouts haven't happened), one winning
-    // seed per match slot, matching the mockup's ACTUALS exactly.
+    // never said how they get in — the mockup answered with a "reveal official
+    // results" toggle over a fixed outcome table, which is what this is. It held a
+    // placeholder outcome until the 2026 tournament actually concluded; now it's
+    // the real result of every knockout match, one winning seed per slot, traced
+    // from FIFA's official bracket graphic (Jose supplied the screenshot — see the
+    // commit that reseeded SeedData.makeTeams() to match it). "demo" stays in the
+    // symbol name pending a decision on whether to rename it now that it's real.
 
     static let demoActualWinnerSeeds: [String: Int] = [
-        "0-0": 1, "0-1": 9, "0-2": 5, "0-3": 4, "0-4": 3, "0-5": 6, "0-6": 10, "0-7": 2,
-        "1-0": 1, "1-1": 4, "1-2": 3, "1-3": 2,
-        "2-0": 1, "2-1": 2,
-        "3-0": 1,
+        "0-0": 1, "0-1": 8, "0-2": 5, "0-3": 4, "0-4": 3, "0-5": 6, "0-6": 7, "0-7": 2,
+        "1-0": 1, "1-1": 5, "1-2": 6, "1-3": 7,
+        "2-0": 5, "2-1": 7,
+        "3-0": 5,
     ]
 
     /// True once any actual result is present — the Score screen derives its
