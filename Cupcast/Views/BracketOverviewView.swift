@@ -16,8 +16,8 @@ import SwiftData
 
 struct BracketOverviewView: View {
     /// Which title treatment to draw. `.banner` is the shipping choice, picked by
-    /// comparing all three in this very screen — see `CupcastTitleComparison`,
-    /// which passes the others.
+    /// comparing all three in this screen (the comparison harness has since been
+    /// deleted — the call was made).
     var titleStyle: CupcastTitleStyle = .banner
 
     @Environment(BracketEngine.self) private var engine

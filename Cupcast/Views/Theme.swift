@@ -240,11 +240,9 @@ struct CupcastBannerImage: View {
     }
 }
 
-/// Which treatment the bracket screen uses for its title.
-///
-/// Exists so the candidates can be compared in the real screen rather than in
-/// isolation — see `CupcastTitleComparison`. `.text` is the shipping default: it
-/// scales with Dynamic Type and stays sharp at any size.
+/// Which treatment the bracket screen uses for its title. `.banner` ships (see
+/// BracketOverviewView's default); `.text` and `.image` are the two runner-up
+/// treatments, kept because BracketOverviewView still switches over all three.
 enum CupcastTitleStyle {
     case text      // CupcastTitle — live SwiftUI text
     case image     // CupcastWordmarkImage — the 3D chrome artwork
